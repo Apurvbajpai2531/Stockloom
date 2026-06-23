@@ -2,9 +2,13 @@ from nicegui import ui
 
 from api_client import api
 from components import render_header
+from auth_guard import require_login
 
 
 def render_purchase_orders():
+    if not require_login():
+        return
+
     render_header(active="Purchase Orders")
 
     with ui.column().classes("w-full p-4 md:p-6 gap-4 page-container"):

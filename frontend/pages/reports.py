@@ -4,9 +4,13 @@ import os
 from components import render_header
 
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
+from auth_guard import require_login
 
 
 def render_reports():
+    if not require_login():
+        return
+
     render_header(active="Reports")
 
     with ui.column().classes("w-full p-4 md:p-6 gap-6 page-container"):

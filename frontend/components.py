@@ -2,10 +2,10 @@ from nicegui import ui
 
 
 def render_header(active: str = ""):
-    """Left sidebar navigation, signage style."""
-    with ui.left_drawer(value=True, fixed=True).classes("p-0").style(
+    drawer = ui.left_drawer(value=True).classes("p-0").style(
         "background:#1C2230; width:230px; border-right:3px solid #E8A33D;"
-    ):
+    )
+    with drawer:
         with ui.column().classes("w-full p-4 gap-1"):
             with ui.row().classes("items-center gap-2 mb-6"):
                 ui.icon("warehouse").style("color:#E8A33D").classes("text-3xl")
@@ -30,8 +30,18 @@ def render_header(active: str = ""):
                     dark.toggle()
                     icon_btn.props(f"icon={'light_mode' if dark.value else 'dark_mode'}")
 
-    with ui.header().classes("px-6 py-3 items-center").style("background:#1C2230; border-bottom:3px solid #E8A33D;"):
-        ui.label("StockLoom Operations").classes("text-white font-semibold")
+            from api_client import clear_token
+
+            def logout():
+                clear_token()
+                ui.navigate.to("/")
+
+            with ui.row().classes("items-center gap-2 px-2 mt-1"):
+                ui.button("Logout", icon="logout", on_click=logout).props("flat color=white").classes("text-sm")
+
+    with ui.header().classes("px-4 py-3 items-center").style("background:#1C2230; border-bottom:3px solid #E8A33D;"):
+        ui.button(icon="menu", on_click=drawer.toggle).props("flat round color=white").classes("md:hidden")
+        ui.label("StockLoom Operations").classes("text-white font-semibold ml-2")
 
 
 def _nav_link(label: str, target: str, icon: str, active: str):

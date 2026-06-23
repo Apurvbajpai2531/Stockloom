@@ -13,7 +13,7 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth
 
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
@@ -32,14 +32,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(organization.router, prefix="/api", tags=["organization"])
-app.include_router(items.router, prefix="/api", tags=["items"])
-app.include_router(stock.router, prefix="/api", tags=["stock"])
-app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
-app.include_router(purchase_orders.router, prefix="/api", tags=["purchase-orders"])
-app.include_router(alerts.router, prefix="/api", tags=["alerts"])
-app.include_router(reports.router, prefix="/api", tags=["reports"])
+from fastapi import Depends
+from app.core.auth import get_current_user
 
+protected = [Depends(get_current_user)]
+
+app.include_router(organization.router, prefix="/api", tags=["organization"], dependencies=protected)
+app.include_router(items.router, prefix="/api", tags=["items"], dependencies=protected)
+app.include_router(stock.router, prefix="/api", tags=["stock"], dependencies=protected)
+app.include_router(dashboard.router, prefix="/api", tags=["dashboard"], dependencies=protected)
+app.include_router(purchase_orders.router, prefix="/api", tags=["purchase-orders"], dependencies=protected)
+app.include_router(alerts.router, prefix="/api", tags=["alerts"], dependencies=protected)
+app.include_router(reports.router, prefix="/api", tags=["reports"], dependencies=protected)
+app.include_router(auth.router, prefix="/api", tags=["auth"])  # login itself stays open
 
 @app.get("/api/health")
 def health_check():

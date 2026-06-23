@@ -2,9 +2,13 @@ from nicegui import ui
 
 from api_client import api
 from components import render_header
+from auth_guard import require_login
 
 
 def render_warehouses():
+    if not require_login():
+        return
+
     render_header(active="Warehouses")
 
     with ui.column().classes("w-full p-6 gap-4"):

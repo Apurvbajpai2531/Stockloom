@@ -2,11 +2,14 @@ from nicegui import ui
 
 from api_client import api
 from components import render_header
+from auth_guard import require_login
 
 
 def render_movements():
-    render_header(active="Stock Movements")
+    if not require_login():
+        return
 
+    render_header(active="Stock Movements")
     with ui.column().classes("w-full p-6 gap-6"):
         ui.label("Stock Movements").classes("text-2xl font-bold")
 
