@@ -17,6 +17,8 @@ def list_items(
     search: str | None = Query(default=None, description="Search by name or SKU"),
     category_id: int | None = None,
     low_stock_only: bool = False,
+    limit: int = Query(default=100, le=500),
+    offset: int = Query(default=0, ge=0),
 ):
     q = db.query(Item)
     if search:
@@ -25,7 +27,7 @@ def list_items(
     if category_id:
         q = q.filter(Item.category_id == category_id)
 
-    items = q.order_by(Item.name).all()
+    items = q.order_by(Item.name).offset(offset).limit(limit).all()
 
     totals = dict(
         db.query(StockLevel.item_id, func.coalesce(func.sum(StockLevel.quantity), 0))

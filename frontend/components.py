@@ -2,27 +2,42 @@ from nicegui import ui
 
 
 def render_header(active: str = ""):
-    with ui.header().classes("items-center justify-between bg-slate-800 dark:bg-slate-900 px-4"):
-        with ui.row().classes("items-center gap-4 nav-links flex-wrap"):
-            ui.label("StockLoom").classes("text-xl font-bold text-white")
-            with ui.row().classes("gap-3 nav-links flex-wrap"):
-                _nav_link("Dashboard", "/", active)
-                _nav_link("Items", "/items", active)
-                _nav_link("Warehouses", "/warehouses", active)
-                _nav_link("Stock Movements", "/movements", active)
-                _nav_link("Categories", "/categories", active)
+    """Left sidebar navigation, signage style."""
+    with ui.left_drawer(value=True, fixed=True).classes("p-0").style(
+        "background:#1C2230; width:230px; border-right:3px solid #E8A33D;"
+    ):
+        with ui.column().classes("w-full p-4 gap-1"):
+            with ui.row().classes("items-center gap-2 mb-6"):
+                ui.icon("warehouse").style("color:#E8A33D").classes("text-3xl")
+                ui.label("STOCKLOOM").classes("text-lg font-bold text-white tracking-wide")
 
-        with ui.row().classes("items-center gap-2"):
-            dark = ui.dark_mode()
-            icon_btn = ui.button(icon="dark_mode", on_click=lambda: toggle_dark()).props("flat round color=white")
+            _nav_link("Dashboard", "/dashboard", "dashboard", active)
+            _nav_link("Items", "/items", "inventory_2", active)
+            _nav_link("Warehouses", "/warehouses", "store", active)
+            _nav_link("Stock Movements", "/movements", "sync_alt", active)
+            _nav_link("Categories", "/categories", "category", active)
+            _nav_link("Purchase Orders", "/purchase-orders", "shopping_cart", active)
+            _nav_link("Reports", "/reports", "description", active)
 
-            def toggle_dark():
-                dark.toggle()
-                icon_btn.props(f"icon={'light_mode' if dark.value else 'dark_mode'}")
+            ui.element("div").classes("flex-grow")
+
+            with ui.row().classes("items-center gap-2 mt-6 px-2"):
+                dark = ui.dark_mode()
+                icon_btn = ui.button(icon="dark_mode", on_click=lambda: toggle_dark()).props("flat round color=white")
+                ui.label("Theme").classes("text-white text-sm")
+
+                def toggle_dark():
+                    dark.toggle()
+                    icon_btn.props(f"icon={'light_mode' if dark.value else 'dark_mode'}")
+
+    with ui.header().classes("px-6 py-3 items-center").style("background:#1C2230; border-bottom:3px solid #E8A33D;"):
+        ui.label("StockLoom Operations").classes("text-white font-semibold")
 
 
-def _nav_link(label: str, target: str, active: str):
-    classes = "text-white no-underline cursor-pointer hover:opacity-80"
-    if active == label:
-        classes += " font-bold underline"
-    ui.link(label, target).classes(classes)
+def _nav_link(label: str, target: str, icon: str, active: str):
+    is_active = active == label
+    bg = "background: rgba(232,163,61,0.15); border-left: 3px solid #E8A33D;" if is_active else "border-left: 3px solid transparent;"
+    with ui.link(target=target).classes("no-underline w-full"):
+        with ui.row().classes("items-center gap-3 px-3 py-2 cursor-pointer text-white hover:bg-white/5 rounded-r-lg w-full").style(bg):
+            ui.icon(icon).classes("text-lg")
+            ui.label(label).classes("text-sm font-medium")

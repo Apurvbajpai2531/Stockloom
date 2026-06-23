@@ -17,7 +17,7 @@ def render_movements():
 
         with ui.card().classes("w-full p-4"):
             ui.label("Record a Movement").classes("text-lg font-semibold")
-            with ui.row().classes("gap-4 items-end flex-wrap"):
+            with ui.row().classes("gap-4 items-end flex-wrap form-row"):
                 item_select = ui.select(item_options, label="Item").classes("w-64")
                 movement_type = ui.select(
                     {"inbound": "Inbound", "outbound": "Outbound", "transfer": "Transfer", "adjustment": "Adjustment"},
