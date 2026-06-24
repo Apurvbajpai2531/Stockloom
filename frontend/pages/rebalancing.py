@@ -46,5 +46,22 @@ def render_rebalancing():
                             ui.icon("arrow_forward")
                             ui.label(f"{s['to_warehouse_name']} ({s['to_quantity']} units)")
 
+                        def execute(s=s):
+                            try:
+                                api.post("/stock-movements", {
+                                    "item_id": s["item_id"],
+                                    "warehouse_id": s["from_warehouse_id"],
+                                    "destination_warehouse_id": s["to_warehouse_id"],
+                                    "movement_type": "transfer",
+                                    "quantity": s["suggested_transfer_qty"],
+                                    "reference": "auto-rebalance",
+                                })
+                                ui.notify("Transfer executed", type="positive")
+                                refresh()
+                            except Exception as e:
+                                ui.notify(f"Failed: {e}", type="negative")
+
+                        ui.button("Execute Transfer", icon="check", on_click=execute).classes("mt-2").props("color=primary")
+
         ui.button("Refresh", icon="refresh", on_click=refresh).classes("self-end")
         refresh()

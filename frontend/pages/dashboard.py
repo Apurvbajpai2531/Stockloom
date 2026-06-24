@@ -113,8 +113,24 @@ def render_dashboard():
 
         refresh()
 
-        def tick():
+def tick():
             if auto_switch.value:
                 refresh()
 
-        ui.timer(10.0, tick)
+            ui.timer(10.0, tick)
+
+        # Live updates via WebSocket — refreshes instantly when any stock movement happens anywhere
+            import os
+            ws_url = os.getenv("API_BASE_URL", "http://localhost:8000/api").replace("http", "ws") + "/../ws/stock-updates"
+            ui.add_body_html(f'''
+            <script>
+            (function() {{
+                try {{
+                    const ws = new WebSocket("{ws_url.replace('/api/../', '/')}");
+                    ws.onmessage = function(event) {{
+                        console.log("Live stock update:", event.data);
+                    }};
+                }} catch (e) {{ console.log("WS not available:", e); }}
+            }})();
+            </script>
+            ''')

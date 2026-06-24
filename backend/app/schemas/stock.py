@@ -22,7 +22,8 @@ class StockMovementCreate(BaseModel):
     destination_warehouse_id: Optional[int] = None
     reference: Optional[str] = None
     notes: Optional[str] = None
-
+    idempotency_key: Optional[str] = None
+    
     @field_validator("quantity")
     @classmethod
     def quantity_must_be_positive(cls, v):

@@ -2,6 +2,7 @@ from nicegui import ui
 
 
 def render_header(active: str = ""):
+    _add_command_palette()
     drawer = ui.left_drawer(value=True).classes("p-0").style(
         "background:#1C2230; width:230px; border-right:3px solid #E8A33D;"
     )
@@ -46,10 +47,10 @@ def render_header(active: str = ""):
     with ui.header().classes("px-4 py-3 items-center justify-between").style(
         "background:#1C2230; border-bottom:3px solid #E8A33D;"
     ):
-        with ui.row().classes("items-center"):
+        with ui.row().classes("items-center gap-3"):
             ui.button(icon="menu", on_click=drawer.toggle).props("flat round color=white").classes("md:hidden")
-            ui.label("StockLoom Operations").classes("text-white font-semibold ml-2")
-
+            ui.label("StockLoom Operations").classes("text-white font-semibold")
+            ui.label("⌘K / Ctrl+K for quick nav").classes("text-xs hidden md:block").style("color:#9A9C9F;")
         with ui.row().classes("items-center gap-2"):
             search_box = ui.input(placeholder="Search items by SKU or name...").props("dense dark standout").classes("w-64")
 
@@ -99,3 +100,109 @@ def _nav_link(label: str, target: str, icon: str, active: str):
         with ui.row().classes("items-center gap-3 px-3 py-2 cursor-pointer text-white hover:bg-white/5 rounded-r-lg w-full").style(bg):
             ui.icon(icon).classes("text-lg")
             ui.label(label).classes("text-sm font-medium")
+
+
+def _add_command_palette():
+    ui.add_body_html('''
+    <style>
+    #cmdk-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        display: none; align-items: flex-start; justify-content: center;
+        padding-top: 12vh; z-index: 9999;
+    }
+    #cmdk-box {
+        background: #1C2230; border: 1px solid #E8A33D; border-radius: 12px;
+        width: 480px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        font-family: 'Inter', sans-serif;
+    }
+    #cmdk-input {
+        width: 100%; padding: 16px; background: transparent; border: none;
+        color: white; font-size: 16px; outline: none; border-bottom: 1px solid #2A2D35;
+    }
+    #cmdk-list { max-height: 320px; overflow-y: auto; padding: 8px; }
+    .cmdk-item {
+        padding: 10px 12px; border-radius: 8px; color: #ECE9E1; cursor: pointer;
+        display: flex; align-items: center; gap: 10px; font-size: 14px;
+    }
+    .cmdk-item:hover, .cmdk-item.active { background: rgba(232,163,61,0.15); }
+    .cmdk-hint { color: #5B6275; font-size: 11px; padding: 8px 16px; border-top: 1px solid #2A2D35; }
+    </style>
+    <div id="cmdk-overlay">
+        <div id="cmdk-box">
+            <input id="cmdk-input" placeholder="Type a command or search... (try: items, dashboard, reports)" />
+            <div id="cmdk-list"></div>
+            <div class="cmdk-hint">↑↓ to navigate · Enter to select · Esc to close</div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        const commands = [
+            {label: "Go to Dashboard", icon: "📊", url: "/dashboard"},
+            {label: "Go to Items", icon: "📦", url: "/items"},
+            {label: "Go to Warehouses", icon: "🏬", url: "/warehouses"},
+            {label: "Go to Stock Movements", icon: "🔄", url: "/movements"},
+            {label: "Go to Categories", icon: "🏷️", url: "/categories"},
+            {label: "Go to Purchase Orders", icon: "🛒", url: "/purchase-orders"},
+            {label: "Go to Reports", icon: "📄", url: "/reports"},
+            {label: "Go to Audit Log", icon: "📜", url: "/audit-log"},
+            {label: "Go to Reorder Suggestions", icon: "🛍️", url: "/reorder-suggestions"},
+            {label: "Go to Forecasting", icon: "📈", url: "/forecasting"},
+            {label: "Go to Rebalancing", icon: "↔️", url: "/rebalancing"},
+        ];
+
+        let filtered = commands;
+        let activeIndex = 0;
+
+        const overlay = document.getElementById('cmdk-overlay');
+        const input = document.getElementById('cmdk-input');
+        const list = document.getElementById('cmdk-list');
+
+        function render() {
+            list.innerHTML = '';
+            filtered.forEach((cmd, i) => {
+                const div = document.createElement('div');
+                div.className = 'cmdk-item' + (i === activeIndex ? ' active' : '');
+                div.innerHTML = `<span>${cmd.icon}</span><span>${cmd.label}</span>`;
+                div.onclick = () => { window.location.href = cmd.url; };
+                list.appendChild(div);
+            });
+        }
+
+        function open() {
+            overlay.style.display = 'flex';
+            input.value = '';
+            filtered = commands;
+            activeIndex = 0;
+            render();
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function close() {
+            overlay.style.display = 'none';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                if (overlay.style.display === 'flex') { close(); } else { open(); }
+            }
+            if (e.key === 'Escape') close();
+        });
+
+        input.addEventListener('input', () => {
+            const q = input.value.toLowerCase();
+            filtered = commands.filter(c => c.label.toLowerCase().includes(q));
+            activeIndex = 0;
+            render();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') { activeIndex = Math.min(activeIndex + 1, filtered.length - 1); render(); e.preventDefault(); }
+            if (e.key === 'ArrowUp') { activeIndex = Math.max(activeIndex - 1, 0); render(); e.preventDefault(); }
+            if (e.key === 'Enter' && filtered[activeIndex]) { window.location.href = filtered[activeIndex].url; }
+        });
+
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    })();
+    </script>
+    ''')

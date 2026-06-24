@@ -24,6 +24,7 @@ class StockLevel(Base):
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
     warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
     quantity = Column(Integer, nullable=False, default=0)
+    version = Column(Integer, nullable=False, default=0)  # optimistic locking — prevents lost updates
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     item = relationship("Item", back_populates="stock_levels")
@@ -36,6 +37,7 @@ class StockMovement(Base):
     __tablename__ = "stock_movements"
 
     id = Column(Integer, primary_key=True, index=True)
+    idempotency_key = Column(String(100), nullable=True, unique=True, index=True)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
     warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
     destination_warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=True)
