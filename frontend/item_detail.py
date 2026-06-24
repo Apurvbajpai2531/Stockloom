@@ -18,9 +18,17 @@ def render_item_detail(item_id: int):
             ui.label(f"Could not load item: {e}").classes("text-red-600")
             return
 
-        with ui.row().classes("items-center gap-2"):
-            ui.button(icon="arrow_back", on_click=lambda: ui.navigate.to("/items")).props("flat dense")
-            ui.label(f"{item['sku']} — {item['name']}").classes("text-2xl font-bold page-title")
+        import os
+        API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
+
+        with ui.row().classes("items-center gap-2 justify-between w-full"):
+            with ui.row().classes("items-center gap-2"):
+                ui.button(icon="arrow_back", on_click=lambda: ui.navigate.to("/items")).props("flat dense")
+                ui.label(f"{item['sku']} — {item['name']}").classes("text-2xl font-bold page-title")
+            ui.button(
+                "View QR Code", icon="qr_code_2",
+                on_click=lambda: ui.navigate.to(f"{API_BASE}/items/{item_id}/qrcode.png", new_tab=True)
+            ).props("outline")
 
         with ui.row().classes("w-full gap-4 chart-row"):
             with ui.card().classes("p-4 flex-1"):
@@ -31,6 +39,18 @@ def render_item_detail(item_id: int):
                 _info_row("Total Quantity", item["total_quantity"])
                 status = "LOW STOCK" if item["total_quantity"] <= item["reorder_threshold"] else "OK"
                 ui.badge(status, color="red" if status == "LOW STOCK" else "teal").classes("mt-2")
+
+                try:
+                    forecast = api.get(f"/forecasting/stockout-risk/{item_id}")
+                    if forecast.get("days_until_stockout") is not None:
+                        ui.label(f"Est. stockout in {forecast['days_until_stockout']} days").classes(
+                            "text-sm mt-2 font-medium"
+                        ).style(
+                            f"color: {'#C0463C' if forecast['risk']=='critical' else ('#E8A33D' if forecast['risk']=='warning' else '#2F6F6B')}"
+                        )
+                except Exception:
+                    pass
+
                 if item.get("description"):
                     ui.label("Description").classes("font-semibold mt-4")
                     ui.label(item["description"]).style("color:var(--ink-soft)")

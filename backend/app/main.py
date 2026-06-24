@@ -13,7 +13,7 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications
 
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
@@ -45,6 +45,11 @@ app.include_router(purchase_orders.router, prefix="/api", tags=["purchase-orders
 app.include_router(alerts.router, prefix="/api", tags=["alerts"], dependencies=protected)
 app.include_router(reports.router, prefix="/api", tags=["reports"], dependencies=protected)
 app.include_router(auth.router, prefix="/api", tags=["auth"])  # login itself stays open
+app.include_router(audit.router, prefix="/api", tags=["audit"], dependencies=protected)
+app.include_router(qrcodes.router, prefix="/api", tags=["qrcodes"])  # public - just renders a QR image, no sensitive data
+app.include_router(forecasting.router, prefix="/api", tags=["forecasting"], dependencies=protected)
+app.include_router(notifications.router, prefix="/api", tags=["notifications"], dependencies=protected)
+
 
 @app.get("/api/health")
 def health_check():

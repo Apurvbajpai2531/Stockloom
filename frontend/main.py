@@ -10,6 +10,10 @@ from pages.categories import render_categories
 from pages.purchase_orders import render_purchase_orders
 from pages.reports import render_reports
 from pages.item_detail import render_item_detail
+from pages.audit_log import render_audit_log
+from pages.reorder_suggestions import render_reorder_suggestions
+from pages.forecasting import render_forecasting
+from pages.rebalancing import render_rebalancing
 
 ui.dark_mode(False)
 
@@ -93,6 +97,27 @@ flex-direction:column!important;
 .form-row > div{
 width:100%!important;
 }
+                 /* Professional hover polish */
+.q-card { cursor: default; }
+.q-card.cursor-pointer:hover {
+    border-color: var(--amber) !important;
+    transform: translateY(-2px);
+}
+
+.q-tr:hover { background: rgba(232,163,61,0.06) !important; cursor: pointer; }
+
+.q-btn { position: relative; overflow: hidden; }
+.q-btn:active { transform: scale(0.97); }
+
+a, .q-item { transition: background-color 0.15s ease, transform 0.15s ease; }
+
+.q-table tbody tr { transition: background-color 0.15s ease; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+
+.q-field:focus-within .q-field__control { border-color: var(--amber) !important; }
 }
 </style>
 """)
@@ -146,6 +171,22 @@ def purchase_orders_page():
 def reports_page():
     render_reports()
 
+@ui.page("/audit-log")
+def audit_log_page():
+    render_audit_log()
+
+@ui.page("/reorder-suggestions")
+def reorder_suggestions_page():
+    render_reorder_suggestions()    
+
+
+@ui.page("/forecasting")
+def forecasting_page():
+    render_forecasting()
+
+@ui.page("/rebalancing")
+def rebalancing_page():
+    render_rebalancing()
 
 ui.run(
     title="StockLoom",

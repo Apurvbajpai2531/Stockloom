@@ -1,3 +1,5 @@
+from app.core.audit import log_action
+from app.core.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -62,7 +64,7 @@ def get_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/items", response_model=ItemOut, status_code=201)
-def create_item(payload: ItemCreate, db: Session = Depends(get_db)):
+def create_item(payload: ItemCreate, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
     item = Item(**payload.model_dump())
     db.add(item)
     try:
@@ -71,8 +73,8 @@ def create_item(payload: ItemCreate, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=409, detail="SKU already exists")
     db.refresh(item)
+    log_action(db, "create_item", "item", item.id, user, f"SKU={item.sku}, name={item.name}")
     return item
-
 
 @router.put("/items/{item_id}", response_model=ItemOut)
 def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db)):
@@ -91,9 +93,11 @@ def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db)
 
 
 @router.delete("/items/{item_id}", status_code=204)
-def delete_item(item_id: int, db: Session = Depends(get_db)):
+def delete_item(item_id: int, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
     item = db.query(Item).get(item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
+    sku = item.sku
     db.delete(item)
     db.commit()
+    log_action(db, "delete_item", "item", item_id, user, f"SKU={sku}")
