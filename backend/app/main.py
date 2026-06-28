@@ -13,7 +13,7 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network
 
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
@@ -57,7 +57,7 @@ app.include_router(qrcodes.router, prefix="/api", tags=["qrcodes"])  # public - 
 app.include_router(forecasting.router, prefix="/api", tags=["forecasting"], dependencies=protected)
 app.include_router(notifications.router, prefix="/api", tags=["notifications"], dependencies=protected)
 app.include_router(ws.router, prefix="/api", tags=["websocket"])  # no auth dependency — WS auth handled differently
-
+app.include_router(network.router, prefix="/api", tags=["network"], dependencies=protected)
 
 @app.get("/api/health")
 def health_check():

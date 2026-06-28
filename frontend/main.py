@@ -14,6 +14,8 @@ from pages.audit_log import render_audit_log
 from pages.reorder_suggestions import render_reorder_suggestions
 from pages.forecasting import render_forecasting
 from pages.rebalancing import render_rebalancing
+from pages.network import render_network
+
 
 ui.dark_mode(False)
 
@@ -187,6 +189,10 @@ def forecasting_page():
 @ui.page("/rebalancing")
 def rebalancing_page():
     render_rebalancing()
+
+@ui.page("/network")
+def network_page():
+    render_network()
 
 ui.run(
     title="StockLoom",

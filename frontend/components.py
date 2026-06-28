@@ -23,6 +23,8 @@ def render_header(active: str = ""):
             _nav_link("Reorder Suggestions", "/reorder-suggestions", "shopping_bag", active)
             _nav_link("Forecasting", "/forecasting", "insights", active)
             _nav_link("Rebalancing", "/rebalancing", "swap_horiz", active)
+            _nav_link("Network View", "/network", "hub", active)
+
 
             ui.element("div").classes("flex-grow")
 
