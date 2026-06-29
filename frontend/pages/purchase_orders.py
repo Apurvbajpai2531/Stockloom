@@ -38,6 +38,7 @@ def render_purchase_orders():
                 <q-btn v-if="props.row.status === 'draft'" dense flat label="Mark Ordered" @click="() => $parent.$emit('mark-ordered', props.row)" />
                 <q-btn v-if="props.row.status !== 'received' && props.row.status !== 'cancelled'" dense flat color="green" label="Receive" @click="() => $parent.$emit('receive', props.row)" />
                 <q-btn v-if="props.row.status !== 'received' && props.row.status !== 'cancelled'" dense flat color="red" label="Cancel" @click="() => $parent.$emit('cancel', props.row)" />
+                <q-btn dense flat icon="picture_as_pdf" @click="() => $parent.$emit('download-pdf', props.row)" />
             </q-td>
             ''',
         )
@@ -122,4 +123,9 @@ def render_purchase_orders():
         table.on("receive", lambda e: handle_action("receive", e.args))
         table.on("cancel", lambda e: handle_action("cancel", e.args))
 
+        import os
+        API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
+        table.on("download-pdf", lambda e: ui.navigate.to(f"{API_BASE}/purchase-orders/{e.args['id']}/pdf", new_tab=True))
+
         refresh()
+        

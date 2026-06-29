@@ -54,6 +54,8 @@ def render_items():
             <q-td :props="props">
                 <q-btn dense flat icon="edit"
                        @click="() => $parent.$emit('edit-row', props.row)" />
+                <q-btn dense flat icon="content_copy"
+                       @click="() => $parent.$emit('duplicate-row', props.row)" />
                 <q-btn dense flat icon="delete"
                        color="red"
                        @click="() => $parent.$emit('delete-row', props.row)" />
@@ -234,7 +236,24 @@ def render_items():
 
             confirm_dialog.open()
 
+        def handle_duplicate(e):
+            row = e.args
+            try:
+                api.post("/items", {
+                    "sku": f"{row['sku']}-COPY",
+                    "name": f"{row['name']} (Copy)",
+                    "unit": row["unit"],
+                    "unit_price": row["unit_price"],
+                    "reorder_threshold": row["reorder_threshold"],
+                    "description": row.get("description", ""),
+                })
+                ui.notify("Item duplicated", type="positive")
+                refresh()
+            except Exception as ex:
+                ui.notify(f"Duplicate failed: {ex}", type="negative")
+
         table.on("edit-row", handle_edit)
+        table.on("duplicate-row", handle_duplicate)
         table.on("delete-row", handle_delete)
 
         search_input.on("update:model-value", lambda e: refresh())

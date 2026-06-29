@@ -1,8 +1,15 @@
+import io
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from fastapi.responses import StreamingResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 
 from app.core.database import get_db
 from app.models.purchase_order import PurchaseOrder, PurchaseOrderLine, POStatus
@@ -121,3 +128,57 @@ def cancel_purchase_order(po_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(po)
     return po
+
+
+
+@router.get("/purchase-orders/{po_id}/pdf")
+def export_po_pdf(po_id: int, db: Session = Depends(get_db)):
+    po = db.query(PurchaseOrder).get(po_id)
+    if not po:
+        raise HTTPException(status_code=404, detail="Purchase order not found")
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph(f"Purchase Order: {po.po_number}", styles["Title"]))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"Status: {po.status.value.upper()}", styles["Normal"]))
+    elements.append(Paragraph(f"Supplier: {po.supplier.name if po.supplier else 'N/A'}", styles["Normal"]))
+    elements.append(Paragraph(f"Warehouse: {po.warehouse.name if po.warehouse else 'N/A'}", styles["Normal"]))
+    elements.append(Paragraph(f"Created: {po.created_at.strftime('%Y-%m-%d %H:%M') if po.created_at else 'N/A'}", styles["Normal"]))
+    elements.append(Spacer(1, 20))
+
+    data = [["SKU", "Item", "Qty Ordered", "Unit Cost", "Line Total"]]
+    total = 0
+    for line in po.lines:
+        line_total = float(line.unit_cost) * line.quantity_ordered
+        total += line_total
+        data.append([
+            line.item.sku, line.item.name, str(line.quantity_ordered),
+            f"${float(line.unit_cost):.2f}", f"${line_total:.2f}",
+        ])
+    data.append(["", "", "", "Total:", f"${total:.2f}"])
+
+    table = Table(data, colWidths=[1*inch, 2.2*inch, 1*inch, 1*inch, 1*inch])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1C2230")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("GRID", (0, 0), (-1, -2), 0.5, colors.grey),
+        ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+        ("LINEABOVE", (0, -1), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(table)
+
+    if po.notes:
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph(f"Notes: {po.notes}", styles["Normal"]))
+
+    doc.build(elements)
+    buffer.seek(0)
+    return StreamingResponse(
+        buffer, media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=PO_{po.po_number}.pdf"},
+    )

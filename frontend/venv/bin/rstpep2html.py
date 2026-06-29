@@ -1,4 +1,4 @@
-#!/home/hp/Downloads/stockloom(1)/stockloom/frontend/venv/bin/python3
+#!/home/hp/Stockloom_copy/frontend/venv/bin/python3
 
 # $Id: rstpep2html.py 8927 2022-01-03 23:50:05Z milde $
 # Author: David Goodger <goodger@python.org>

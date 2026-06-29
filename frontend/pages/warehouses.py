@@ -13,7 +13,19 @@ def render_warehouses():
 
     with ui.column().classes("w-full p-6 gap-4"):
         ui.label("Warehouses").classes("text-2xl font-bold")
-        ui.button("Add Warehouse", icon="add", on_click=lambda: open_dialog()).classes("self-end")
+        with ui.row().classes("self-end gap-2"):
+            ui.button("Export List", icon="download", on_click=lambda: export_warehouses()).props("outline")
+            ui.button("Add Warehouse", icon="add", on_click=lambda: open_dialog())
+
+        def export_warehouses():
+            import csv, io
+            rows = api.get("/warehouses")
+            buffer = io.StringIO()
+            if rows:
+                writer = csv.DictWriter(buffer, fieldnames=list(rows[0].keys()))
+                writer.writeheader()
+                writer.writerows(rows)
+            ui.download(buffer.getvalue().encode(), "warehouses_export.csv")
 
         columns = [
             {"name": "code", "label": "Code", "field": "code"},

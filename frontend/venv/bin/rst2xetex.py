@@ -1,4 +1,4 @@
-#!/home/hp/Downloads/stockloom(1)/stockloom/frontend/venv/bin/python3
+#!/home/hp/Stockloom_copy/frontend/venv/bin/python3
 
 # $Id: rst2xetex.py 8956 2022-01-20 10:11:44Z milde $
 # Author: Guenter Milde
