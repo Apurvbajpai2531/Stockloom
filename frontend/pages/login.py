@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from api_client import api, set_token
+from api_client import API_BASE, api, set_token
 
 
 def render_login():
@@ -20,6 +20,7 @@ def render_login():
                 try:
                     result = api.post("/auth/login", {"username": username.value, "password": password.value})
                     set_token(result["access_token"])
+                    ui.run_javascript(f"window.__stockloom_token = '{result['access_token']}'; window.__API_BASE__ = '{ API_BASE}';")
                     ui.navigate.to("/dashboard")
                 except Exception:
                     error_label.text = "Invalid username or password"

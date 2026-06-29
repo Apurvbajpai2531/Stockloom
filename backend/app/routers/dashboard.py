@@ -1,6 +1,13 @@
+import io
+
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 
 from app.core.database import get_db
 from app.models.item import Item
@@ -8,6 +15,7 @@ from app.models.stock import StockLevel
 from app.models.organization import Warehouse
 
 router = APIRouter()
+public_router = APIRouter()
 
 
 @router.get("/dashboard/summary")
@@ -64,3 +72,37 @@ def top_items_by_quantity(limit: int = 8, db: Session = Depends(get_db)):
         .all()
     )
     return [{"name": name, "quantity": int(qty)} for name, qty in rows]
+
+
+@public_router.get("/dashboard/export-pdf")
+def export_dashboard_pdf(db: Session = Depends(get_db)):
+    summary = dashboard_summary(db)
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = [Paragraph("StockLoom — Dashboard Snapshot", styles["Title"]), Spacer(1, 16)]
+
+    data = [
+        ["Metric", "Value"],
+        ["Total Items", str(summary["total_items"])],
+        ["Total Warehouses", str(summary["total_warehouses"])],
+        ["Total Units in Stock", str(summary["total_units"])],
+        ["Total Inventory Value", f"${summary['total_inventory_value']:,.2f}"],
+        ["Low Stock Items", str(summary["low_stock_count"])],
+    ]
+    table = Table(data, colWidths=[250, 200])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1C2230")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(table)
+
+    doc.build(elements)
+    buffer.seek(0)
+    return StreamingResponse(
+        buffer, media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=stockloom_dashboard_report.pdf"},
+    )

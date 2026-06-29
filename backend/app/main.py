@@ -13,13 +13,14 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant
 
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
 
 from app.core.database import SessionLocal
 from app.core.auth import ensure_default_admin
+from app.routers.dashboard import router as dashboard_public_router
 
 _db = SessionLocal()
 ensure_default_admin(_db)
@@ -48,6 +49,7 @@ app.include_router(organization.router, prefix="/api", tags=["organization"], de
 app.include_router(items.router, prefix="/api", tags=["items"], dependencies=protected)
 app.include_router(stock.router, prefix="/api", tags=["stock"], dependencies=protected)
 app.include_router(dashboard.router, prefix="/api", tags=["dashboard"], dependencies=protected)
+app.include_router(dashboard.public_router, prefix="/api", tags=["dashboard-public"])
 app.include_router(purchase_orders.router, prefix="/api", tags=["purchase-orders"], dependencies=protected)
 app.include_router(alerts.router, prefix="/api", tags=["alerts"], dependencies=protected)
 app.include_router(reports.router, prefix="/api", tags=["reports"], dependencies=protected)
@@ -58,6 +60,9 @@ app.include_router(forecasting.router, prefix="/api", tags=["forecasting"], depe
 app.include_router(notifications.router, prefix="/api", tags=["notifications"], dependencies=protected)
 app.include_router(ws.router, prefix="/api", tags=["websocket"])  # no auth dependency — WS auth handled differently
 app.include_router(network.router, prefix="/api", tags=["network"], dependencies=protected)
+app.include_router(insights.router, prefix="/api", tags=["insights"], dependencies=protected)
+app.include_router(assistant.router, prefix="/api", tags=["assistant"], dependencies=protected)
+
 
 @app.get("/api/health")
 def health_check():

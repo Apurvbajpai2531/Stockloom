@@ -2,7 +2,11 @@ from nicegui import ui
 
 
 def render_header(active: str = ""):
+    from api_client import get_token, API_BASE
+    token = get_token() or ""
+    ui.run_javascript(f"window.__stockloom_token = '{token}'; window.__API_BASE__ = '{API_BASE}';")
     _add_command_palette()
+    _add_assistant_widget()
     drawer = ui.left_drawer(value=True).classes("p-0").style(
         "background:#1C2230; width:230px; border-right:3px solid #E8A33D;"
     )
@@ -24,6 +28,7 @@ def render_header(active: str = ""):
             _nav_link("Forecasting", "/forecasting", "insights", active)
             _nav_link("Rebalancing", "/rebalancing", "swap_horiz", active)
             _nav_link("Network View", "/network", "hub", active)
+            _nav_link("Smart Insights", "/insights", "auto_awesome", active)
 
 
             ui.element("div").classes("flex-grow")
@@ -49,12 +54,16 @@ def render_header(active: str = ""):
     with ui.header().classes("px-4 py-3 items-center justify-between").style(
         "background:#1C2230; border-bottom:3px solid #E8A33D;"
     ):
+        
+
         with ui.row().classes("items-center gap-3"):
             ui.button(icon="menu", on_click=drawer.toggle).props("flat round color=white").classes("md:hidden")
             ui.label("StockLoom Operations").classes("text-white font-semibold")
             ui.label("⌘K / Ctrl+K for quick nav").classes("text-xs hidden md:block").style("color:#9A9C9F;")
-        with ui.row().classes("items-center gap-2"):
-            search_box = ui.input(placeholder="Search items by SKU or name...").props("dense dark standout").classes("w-64")
+            with ui.row().classes("items-center gap-2"):
+                search_box = ui.input(placeholder="Search items by SKU or name...").props("dense standout").classes("w-64").style(
+                "background: rgba(255,255,255,0.1); border-radius: 8px; --q-field-text-color: white;"
+            )
 
             async def do_search():
                 if not search_box.value or not search_box.value.strip():
@@ -205,6 +214,126 @@ def _add_command_palette():
         });
 
         overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    })();
+    </script>
+                     
+    ''')
+
+ui.add_head_html("""
+<style>
+.q-field__native,
+.q-field__input {
+    color: white !important;
+}
+
+.q-field__label {
+    color: rgba(255,255,255,0.7) !important;
+}
+</style>
+""")
+
+def _add_assistant_widget():
+    ui.add_body_html('''
+    <style>
+#assistant-fab {
+        position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+        border-radius: 50%; background: #1C2230; border: 1.5px solid #E8A33D;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        z-index: 9998; box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    #assistant-fab:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(232,163,61,0.3);
+    }
+    #assistant-fab .material-icons {
+        font-size: 26px; color: #E8A33D;
+    }
+    #assistant-panel {
+        position: fixed; bottom: 92px; right: 24px; width: 340px; max-height: 460px;
+        background: #1C2230; border: 1px solid #E8A33D; border-radius: 14px;
+        display: none; flex-direction: column; z-index: 9998; overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    #assistant-header {
+        padding: 12px 16px; background: #14161C; color: white; font-weight: 600;
+        font-family: 'Space Grotesk', sans-serif; display: flex; justify-content: space-between; align-items: center;
+    }
+    #assistant-messages { flex-grow: 1; overflow-y: auto; padding: 12px; max-height: 320px; }
+    .asst-msg { margin-bottom: 10px; font-size: 13px; line-height: 1.4; }
+    .asst-msg.user { color: #E8A33D; text-align: right; }
+    .asst-msg.bot { color: #ECE9E1; }
+    .asst-msg .item-line { color: #9A9C9F; padding-left: 8px; }
+    #assistant-input-row { display: flex; padding: 10px; border-top: 1px solid #2A2D35; }
+    #assistant-input {
+        flex-grow: 1; background: #0F1116; border: 1px solid #2A2D35; border-radius: 8px;
+        padding: 8px 10px; color: white; outline: none; font-size: 13px;
+    }
+    </style>
+   <div id="assistant-fab"><span class="material-icons">forum</span></div>
+    <div id="assistant-panel">
+        <div id="assistant-header">
+            <span>StockLoom Assistant</span>
+            <span id="assistant-close" style="cursor:pointer;">✕</span>
+        </div>
+        <div id="assistant-messages">
+            <div class="asst-msg bot">Hi! Ask me about stock levels, low stock items, or inventory value.</div>
+        </div>
+        <div id="assistant-input-row">
+            <input id="assistant-input" placeholder="Ask something..." />
+        </div>
+    </div>
+    <script>
+    (function() {
+        const fab = document.getElementById('assistant-fab');
+        const panel = document.getElementById('assistant-panel');
+        const closeBtn = document.getElementById('assistant-close');
+        const input = document.getElementById('assistant-input');
+        const messages = document.getElementById('assistant-messages');
+
+        fab.onclick = () => { panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; };
+        closeBtn.onclick = () => { panel.style.display = 'none'; };
+
+        function addMsg(text, cls) {
+            const div = document.createElement('div');
+            div.className = 'asst-msg ' + cls;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function addList(items) {
+            items.forEach(it => {
+                const div = document.createElement('div');
+                div.className = 'asst-msg bot item-line';
+                div.textContent = '• ' + it;
+                messages.appendChild(div);
+            });
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function ask() {
+            const q = input.value.trim();
+            if (!q) return;
+            addMsg(q, 'user');
+            input.value = '';
+
+            const token = window.__stockloom_token || '';
+            try {
+                const resp = await fetch((window.__API_BASE__ || 'http://localhost:8000/api') + '/assistant/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ query: q })
+                });
+                const data = await resp.json();
+                addMsg(data.answer, 'bot');
+                if (data.list) addList(data.list);
+            } catch (e) {
+                addMsg("Sorry, I couldn't reach the server.", 'bot');
+            }
+        }
+
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(); });
     })();
     </script>
     ''')

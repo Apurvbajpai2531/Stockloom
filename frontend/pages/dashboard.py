@@ -16,9 +16,15 @@ def render_dashboard():
         with ui.row().classes("w-full items-center justify-between"):
             ui.label("Dashboard").classes("text-2xl font-bold")
 
-            with ui.row().classes("items-center gap-2"):
+        with ui.row().classes("items-center gap-2"):
                 auto_switch = ui.switch("Auto-refresh (10s)", value=True)
                 ui.button("Refresh now", icon="refresh", on_click=lambda: refresh()).props("outline")
+                import os
+                API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
+                ui.button(
+                    "Export Report", icon="picture_as_pdf",
+                    on_click=lambda: ui.navigate.to(f"{API_BASE}/dashboard/export-pdf", new_tab=True)
+                ).props("outline")
 
         pulse_container = ui.column().classes("w-full items-center mb-4")
         stats_row = ui.row().classes("w-full gap-4 stats-row")
