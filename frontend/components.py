@@ -24,6 +24,7 @@ def render_header(active: str = ""):
             _nav_link("Purchase Orders", "/purchase-orders", "shopping_cart", active)
             _nav_link("Reports", "/reports", "description", active)
             _nav_link("Audit Log", "/audit-log", "history", active)
+            _nav_link("Settings", "/settings", "settings", active)
             _nav_link("Reorder Suggestions", "/reorder-suggestions", "shopping_bag", active)
             _nav_link("Forecasting", "/forecasting", "insights", active)
             _nav_link("Rebalancing", "/rebalancing", "swap_horiz", active)

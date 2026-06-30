@@ -11,6 +11,7 @@ from pages.purchase_orders import render_purchase_orders
 from pages.reports import render_reports
 from pages.item_detail import render_item_detail
 from pages.audit_log import render_audit_log
+from pages.settings import render_settings
 from pages.reorder_suggestions import render_reorder_suggestions
 from pages.forecasting import render_forecasting
 from pages.rebalancing import render_rebalancing
@@ -177,6 +178,11 @@ def reports_page():
 @ui.page("/audit-log")
 def audit_log_page():
     render_audit_log()
+
+
+@ui.page("/settings")
+def settings_page():
+    render_settings()
 
 @ui.page("/reorder-suggestions")
 def reorder_suggestions_page():
