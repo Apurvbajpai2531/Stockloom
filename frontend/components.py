@@ -30,7 +30,11 @@ def render_header(active: str = ""):
             _nav_link("Rebalancing", "/rebalancing", "swap_horiz", active)
             _nav_link("Network View", "/network", "hub", active)
             _nav_link("Smart Insights", "/insights", "auto_awesome", active)
-
+            _nav_link("Analytics", "/analytics", "bar_chart", active)
+            _nav_link("Command Center", "/command-center", "radar", active)
+            _nav_link("War Room", "/warroom", "emergency", active)
+            _nav_link("Inventory DNA", "/dna", "biotech", active)
+            _nav_link("Supply Chain Timeline", "/timeline", "timeline", active)
 
             ui.element("div").classes("flex-grow")
 

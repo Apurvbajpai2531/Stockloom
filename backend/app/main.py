@@ -13,7 +13,7 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, analytics, anomaly
 
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
@@ -62,6 +62,7 @@ app.include_router(ws.router, prefix="/api", tags=["websocket"])  # no auth depe
 app.include_router(network.router, prefix="/api", tags=["network"], dependencies=protected)
 app.include_router(insights.router, prefix="/api", tags=["insights"], dependencies=protected)
 app.include_router(assistant.router, prefix="/api", tags=["assistant"], dependencies=protected)
+app.include_router(anomaly.router, prefix="/api", tags=["anomaly"], dependencies=protected)
 
 
 @app.get("/api/health")

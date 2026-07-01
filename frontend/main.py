@@ -17,6 +17,11 @@ from pages.forecasting import render_forecasting
 from pages.rebalancing import render_rebalancing
 from pages.network import render_network
 from pages.insights import render_insights
+from pages.analytics import render_analytics
+from pages.command_center import render_command_center
+from pages.warroom import render_warroom
+from pages.dna import render_dna
+from pages.timeline import render_timeline
 
 
 ui.dark_mode(False)
@@ -205,6 +210,31 @@ def network_page():
 @ui.page("/insights")
 def insights_page():
     render_insights()
+
+@ui.page("/analytics")
+def analytics_page():
+    render_analytics()
+
+
+
+@ui.page("/command-center")
+def command_center_page():
+    render_command_center()
+
+
+@ui.page("/warroom")
+def warroom_page():
+    render_warroom()
+
+
+@ui.page("/dna")
+def dna_page():
+    render_dna()
+
+
+@ui.page("/timeline")
+def timeline_page():
+    render_timeline()
 
     
 
