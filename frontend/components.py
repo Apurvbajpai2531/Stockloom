@@ -35,6 +35,9 @@ def render_header(active: str = ""):
             _nav_link("War Room", "/warroom", "emergency", active)
             _nav_link("Inventory DNA", "/dna", "biotech", active)
             _nav_link("Supply Chain Timeline", "/timeline", "timeline", active)
+            _nav_link("Supplier Intelligence", "/supplier-intelligence", "store", active)
+            _nav_link("Alert Rules", "/rules", "rule", active)
+
 
             ui.element("div").classes("flex-grow")
 

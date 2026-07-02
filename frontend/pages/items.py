@@ -44,9 +44,57 @@ def render_items():
             {"name": "status", "label": "Status", "field": "status"},
             {"name": "actions", "label": "Actions", "field": "actions"},
         ]
-
         table = ui.table(columns=columns, rows=[], row_key="id").classes("w-full")
+        table.props("selection=multiple")
         grid_container = ui.row().classes("w-full gap-4 flex-wrap").style("display:none;")
+
+        with ui.row().classes("items-center gap-2 mt-1"):
+            ui.label("Batch:").classes("text-xs").style("color:var(--ink-soft)")
+            ui.button("Export Selected", icon="download", on_click=lambda: batch_export()).props("flat dense outline")
+            ui.button("Delete Selected", icon="delete", on_click=lambda: batch_delete()).props("flat dense color=red")
+
+        def batch_export():
+            selected = table.selected
+            if not selected:
+                ui.notify("No items selected", type="warning")
+                return
+            import csv, io
+            buffer = io.StringIO()
+            writer = csv.DictWriter(buffer, fieldnames=["sku", "name", "unit", "unit_price", "total_quantity", "reorder_threshold"])
+            writer.writeheader()
+            for row in selected:
+                writer.writerow({
+                    "sku": row["sku"],
+                    "name": row["name"],
+                    "unit": row["unit"],
+                    "unit_price": row["unit_price"],
+                    "total_quantity": row["total_quantity"],
+                    "reorder_threshold": row["reorder_threshold"],
+                })
+            ui.download(buffer.getvalue().encode(), "selected_items.csv")
+            ui.notify(f"Exported {len(selected)} items", type="positive")
+
+        def batch_delete():
+            selected = table.selected
+            if not selected:
+                ui.notify("No items selected", type="warning")
+                return
+            with ui.dialog() as confirm_dialog, ui.card():
+                ui.label(f"Delete {len(selected)} selected items? This cannot be undone.").classes("font-semibold")
+                with ui.row().classes("justify-end gap-2 mt-3"):
+                    ui.button("Cancel", on_click=confirm_dialog.close)
+                    def do_delete():
+                        errors = 0
+                        for row in selected:
+                            try:
+                                api.delete(f"/items/{row['id']}")
+                            except Exception:
+                                errors += 1
+                        confirm_dialog.close()
+                        ui.notify(f"Deleted {len(selected)-errors} items" + (f", {errors} failed" if errors else ""), type="positive")
+                        refresh()
+                    ui.button("Delete All", on_click=do_delete).props("color=red")
+            confirm_dialog.open()
 
         table.add_slot(
             "body-cell-actions",

@@ -22,7 +22,8 @@ from pages.command_center import render_command_center
 from pages.warroom import render_warroom
 from pages.dna import render_dna
 from pages.timeline import render_timeline
-
+from pages.supplier_intelligence import render_supplier_intelligence
+from pages.rules import render_rules
 
 ui.dark_mode(False)
 
@@ -235,6 +236,16 @@ def dna_page():
 @ui.page("/timeline")
 def timeline_page():
     render_timeline()
+
+
+@ui.page("/supplier-intelligence")
+def supplier_intelligence_page():
+    render_supplier_intelligence()
+
+
+@ui.page("/rules")
+def rules_page():
+    render_rules()
 
     
 

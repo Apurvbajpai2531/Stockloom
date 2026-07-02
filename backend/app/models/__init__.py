@@ -5,3 +5,5 @@ from app.models.purchase_order import PurchaseOrder, PurchaseOrderLine, POStatus
 from app.models.audit_log import AuditLog  # noqa: F401
 from app.models.notification import Notification  # noqa: F401
 from app.models.user import User  # noqa: F401
+from app.models.alert_rule import AlertRule  # noqa: F401
+from app.models.price_history import PriceHistory  # noqa: F401

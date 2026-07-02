@@ -128,6 +128,41 @@ def render_item_detail(item_id: int):
             pass
 
 
+
+        ui.label("Price History").classes("text-lg font-semibold mt-4")
+        try:
+            price_hist = api.get(f"/price-history/{item_id}")
+            if price_hist["history"]:
+                price_chart = ui.echart({
+                    "xAxis": {"type": "category", "data": [h["changed_at"][:10] for h in price_hist["history"]]},
+                    "yAxis": {"type": "value"},
+                    "series": [{
+                        "type": "line",
+                        "data": [float(h["new_price"]) for h in price_hist["history"]],
+                        "smooth": True,
+                        "itemStyle": {"color": "#E8A33D"},
+                        "areaStyle": {"color": "rgba(232,163,61,0.1)"},
+                    }],
+                    "tooltip": {"trigger": "axis"},
+                }).classes("w-full h-48")
+                ph_table = ui.table(
+                    columns=[
+                        {"name": "changed_at", "label": "Date", "field": "changed_at"},
+                        {"name": "old_price", "label": "Old Price", "field": "old_price"},
+                        {"name": "new_price", "label": "New Price", "field": "new_price"},
+                        {"name": "changed_by", "label": "Changed By", "field": "changed_by"},
+                    ],
+                    rows=[
+                        {**h, "old_price": f"${h['old_price']:.2f}", "new_price": f"${h['new_price']:.2f}", "changed_at": h["changed_at"][:16]}
+                        for h in price_hist["history"]
+                    ],
+                    row_key="changed_at",
+                ).classes("w-full")
+            else:
+                ui.label("No price changes recorded yet. Edit the item's price to start tracking.").style("color:var(--ink-soft)")
+        except Exception:
+            pass
+
 def _info_row(label: str, value):
     with ui.row().classes("justify-between w-full text-sm py-1").style("border-bottom:1px solid var(--line);"):
         ui.label(label).style("color:var(--ink-soft)")

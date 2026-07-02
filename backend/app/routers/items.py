@@ -78,10 +78,21 @@ def create_item(payload: ItemCreate, db: Session = Depends(get_db), user: str = 
     return item
 
 @router.put("/items/{item_id}", response_model=ItemOut)
-def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db)):
+def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
     item = db.query(Item).get(item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
+
+    # Track price change
+    from app.models.price_history import PriceHistory
+    if payload.unit_price is not None and float(payload.unit_price) != float(item.unit_price):
+        db.add(PriceHistory(
+            item_id=item_id,
+            old_price=item.unit_price,
+            new_price=payload.unit_price,
+            changed_by=user,
+        ))
+
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, field, value)
     try:

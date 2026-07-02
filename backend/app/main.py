@@ -13,8 +13,7 @@ logger = logging.getLogger("stockloom")
 
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, analytics, anomaly
-
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, analytics, anomaly, supplier_analytics, rules, price_history
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
 
@@ -63,6 +62,9 @@ app.include_router(network.router, prefix="/api", tags=["network"], dependencies
 app.include_router(insights.router, prefix="/api", tags=["insights"], dependencies=protected)
 app.include_router(assistant.router, prefix="/api", tags=["assistant"], dependencies=protected)
 app.include_router(anomaly.router, prefix="/api", tags=["anomaly"], dependencies=protected)
+app.include_router(supplier_analytics.router, prefix="/api", tags=["supplier-analytics"], dependencies=protected)
+app.include_router(rules.router, prefix="/api", tags=["rules"], dependencies=protected)
+app.include_router(price_history.router, prefix="/api", tags=["price-history"], dependencies=protected)
 
 
 @app.get("/api/health")
