@@ -37,6 +37,9 @@ def render_header(active: str = ""):
             _nav_link("Supply Chain Timeline", "/timeline", "timeline", active)
             _nav_link("Supplier Intelligence", "/supplier-intelligence", "store", active)
             _nav_link("Alert Rules", "/rules", "rule", active)
+            _nav_link("Reservations", "/reservations", "bookmark", active)
+            _nav_link("Cycle Count", "/cycle-count", "fact_check", active)
+            _nav_link("Cost Analysis", "/cost-analysis", "calculate", active)
 
 
             ui.element("div").classes("flex-grow")

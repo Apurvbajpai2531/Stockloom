@@ -24,6 +24,11 @@ from pages.dna import render_dna
 from pages.timeline import render_timeline
 from pages.supplier_intelligence import render_supplier_intelligence
 from pages.rules import render_rules
+from pages.reservations import render_reservations
+from pages.cycle_count import render_cycle_count
+from pages.cost_analysis import render_cost_analysis
+
+
 
 ui.dark_mode(False)
 
@@ -247,6 +252,20 @@ def supplier_intelligence_page():
 def rules_page():
     render_rules()
 
+
+@ui.page("/reservations")
+def reservations_page():
+    render_reservations()
+
+
+@ui.page("/cycle-count")
+def cycle_count_page():
+    render_cycle_count()
+
+
+@ui.page("/cost-analysis")
+def cost_analysis_page():
+    render_cost_analysis()
     
 
 ui.run(

@@ -7,3 +7,5 @@ from app.models.notification import Notification  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.models.alert_rule import AlertRule  # noqa: F401
 from app.models.price_history import PriceHistory  # noqa: F401
+from app.models.reservation import StockReservation  # noqa: F401
+from app.models.cycle_count import CycleCount, CycleCountLine  # noqa: F401s
