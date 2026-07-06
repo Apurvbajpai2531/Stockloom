@@ -2,50 +2,79 @@
 
 StockLoom is a full-stack inventory and warehouse management system built with **FastAPI**, **NiceGUI**, and **PostgreSQL** for managing stock, warehouse operations, purchasing, and inventory analytics.
 
+---
+
 ## Tech Stack
 
-* **Backend:** FastAPI + SQLAlchemy + PostgreSQL
-* **Frontend:** NiceGUI
-* **Auth:** JWT + Role-Based Access
+- Backend: FastAPI + SQLAlchemy + PostgreSQL  
+- Frontend: NiceGUI  
+- Auth: JWT + Role-Based Access  
+
+---
 
 ## Features
 
-* Inventory, Items & Warehouse Management
-* Stock Movements (Inbound / Outbound / Transfer / Adjustment)
-* Purchase Orders & Auto Stock Updates
-* Dashboard, Reports & Analytics
-* Low Stock Alerts & Reorder Suggestions
-* Stock Forecasting & ABC Analysis
-* JWT Authentication & Role Management
-* Audit Logs, Notifications & QR Support
-* Responsive UI with Dark Mode & Command Palette
+- Inventory, Items & Warehouse Management  
+- Stock Movements (Inbound / Outbound / Transfer / Adjustment)  
+- Purchase Orders & Auto Stock Updates  
+- Dashboard, Reports & Analytics  
+- Low Stock Alerts & Reorder Suggestions  
+- Stock Forecasting & ABC Analysis  
+- JWT Authentication & Role Management  
+- Audit Logs, Notifications & QR Support  
+- Responsive UI with Dark Mode & Command Palette  
+
+---
 
 ## Run Locally
 
-### Backend
-
-```bash
+Backend:
 cd backend
+python -m venv virtual_environment_name
 pip install -r requirements.txt
 uvicorn app.main:app --reload
-```
 
-### Frontend
-
-```bash
+Frontend:
 cd frontend
+python -m venv virtual_environment_name
 pip install -r requirements.txt
 python3 main.py
-```
 
-Backend → `http://localhost:8000/docs`
-Frontend → `http://localhost:8081`
+---
 
-## Default Login
+## Docker Compose (Recommended)
 
-```text
-Username: admin
-Password: stockloom123
-```
+Run full stack using Docker:
 
-Production-inspired inventory architecture with secure stock operations, analytics, and warehouse orchestration.
+docker compose up --build
+
+Stop services:
+
+docker compose down
+
+---
+
+## Access URLs
+
+Frontend UI:
+http://localhost:8081
+
+Backend API Docs:
+http://localhost:8000/docs
+
+---
+
+## Default Login (UI Access)
+
+Open frontend and login using:
+
+Username: admin  
+Password: stockloom123  
+
+---
+
+---
+
+## Overview
+
+StockLoom is designed with production-grade architecture for secure inventory control, warehouse orchestration, and analytics-driven decision making.
