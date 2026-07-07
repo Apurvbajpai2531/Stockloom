@@ -15,7 +15,9 @@ router = APIRouter()
 def flow_graph(db: Session = Depends(get_db)):
     warehouses = db.query(Warehouse).all()
     stock_totals = dict(
-        db.query(StockLevel.warehouse_id, func.coalesce(func.sum(StockLevel.quantity), 0))
+        db.query(
+            StockLevel.warehouse_id, func.coalesce(func.sum(StockLevel.quantity), 0)
+        )
         .group_by(StockLevel.warehouse_id)
         .all()
     )
@@ -55,12 +57,15 @@ def flow_graph(db: Session = Depends(get_db)):
 
     return {"nodes": nodes, "edges": edges}
 
+
 @router.get("/network/pulse")
 def system_pulse(db: Session = Depends(get_db)):
     """Aggregated health metrics for the animated pulse dashboard."""
     total_items = db.query(func.count(Item.id)).scalar() or 0
     total_warehouses = db.query(func.count(Warehouse.id)).scalar() or 0
-    total_units = db.query(func.coalesce(func.sum(StockLevel.quantity), 0)).scalar() or 0
+    total_units = (
+        db.query(func.coalesce(func.sum(StockLevel.quantity), 0)).scalar() or 0
+    )
 
     totals_by_item = dict(
         db.query(StockLevel.item_id, func.coalesce(func.sum(StockLevel.quantity), 0))

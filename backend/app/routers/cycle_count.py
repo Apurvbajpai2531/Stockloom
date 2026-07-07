@@ -24,14 +24,20 @@ def list_cycle_counts(db: Session = Depends(get_db)):
             "created_at": c.created_at.isoformat() if c.created_at else None,
             "line_count": len(c.lines),
             "verified_count": sum(1 for line in c.lines if line.is_verified),
-            "variance_count": sum(1 for line in c.lines if line.variance and line.variance != 0),
+            "variance_count": sum(
+                1 for line in c.lines if line.variance and line.variance != 0
+            ),
         }
         for c in counts
     ]
 
 
 @router.post("/cycle-counts", status_code=201)
-def create_cycle_count(warehouse_id: int, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+def create_cycle_count(
+    warehouse_id: int,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
     """Creates a cycle count session for a warehouse — snapshots current system quantities."""
     cc = CycleCount(warehouse_id=warehouse_id, created_by=user)
     db.add(cc)
@@ -39,11 +45,13 @@ def create_cycle_count(warehouse_id: int, db: Session = Depends(get_db), user: s
 
     levels = db.query(StockLevel).filter(StockLevel.warehouse_id == warehouse_id).all()
     for lvl in levels:
-        db.add(CycleCountLine(
-            cycle_count_id=cc.id,
-            item_id=lvl.item_id,
-            system_quantity=lvl.quantity,
-        ))
+        db.add(
+            CycleCountLine(
+                cycle_count_id=cc.id,
+                item_id=lvl.item_id,
+                system_quantity=lvl.quantity,
+            )
+        )
 
     db.commit()
     db.refresh(cc)
@@ -87,12 +95,18 @@ class CountSubmit(BaseModel):
 def submit_count(cc_id: int, payload: CountSubmit, db: Session = Depends(get_db)):
     cc = db.query(CycleCount).get(cc_id)
     if not cc or cc.status != "open":
-        raise HTTPException(status_code=400, detail="Cycle count not found or already completed")
+        raise HTTPException(
+            status_code=400, detail="Cycle count not found or already completed"
+        )
 
-    line = db.query(CycleCountLine).filter(
-        CycleCountLine.id == payload.line_id,
-        CycleCountLine.cycle_count_id == cc_id,
-    ).first()
+    line = (
+        db.query(CycleCountLine)
+        .filter(
+            CycleCountLine.id == payload.line_id,
+            CycleCountLine.cycle_count_id == cc_id,
+        )
+        .first()
+    )
     if not line:
         raise HTTPException(status_code=404, detail="Line not found")
 
@@ -100,34 +114,49 @@ def submit_count(cc_id: int, payload: CountSubmit, db: Session = Depends(get_db)
     line.variance = payload.counted_quantity - line.system_quantity
     line.is_verified = True
     db.commit()
-    return {"variance": line.variance, "system": line.system_quantity, "counted": line.counted_quantity}
+    return {
+        "variance": line.variance,
+        "system": line.system_quantity,
+        "counted": line.counted_quantity,
+    }
 
 
 @router.post("/cycle-counts/{cc_id}/complete")
-def complete_cycle_count(cc_id: int, apply_adjustments: bool = False, db: Session = Depends(get_db)):
+def complete_cycle_count(
+    cc_id: int, apply_adjustments: bool = False, db: Session = Depends(get_db)
+):
     """Completes the cycle count. Optionally applies adjustments to correct system quantities."""
     cc = db.query(CycleCount).get(cc_id)
     if not cc or cc.status != "open":
-        raise HTTPException(status_code=400, detail="Cycle count not found or already completed")
+        raise HTTPException(
+            status_code=400, detail="Cycle count not found or already completed"
+        )
 
     if apply_adjustments:
         from app.models.stock import StockLevel, StockMovement, MovementType
+
         for line in cc.lines:
             if line.counted_quantity is not None and line.variance != 0:
-                lvl = db.query(StockLevel).filter(
-                    StockLevel.item_id == line.item_id,
-                    StockLevel.warehouse_id == cc.warehouse_id,
-                ).first()
+                lvl = (
+                    db.query(StockLevel)
+                    .filter(
+                        StockLevel.item_id == line.item_id,
+                        StockLevel.warehouse_id == cc.warehouse_id,
+                    )
+                    .first()
+                )
                 if lvl:
                     lvl.quantity = line.counted_quantity
-                    db.add(StockMovement(
-                        item_id=line.item_id,
-                        warehouse_id=cc.warehouse_id,
-                        movement_type=MovementType.ADJUSTMENT,
-                        quantity=line.counted_quantity,
-                        reference=f"CC-{cc_id}",
-                        notes=f"Cycle count adjustment (variance: {line.variance})",
-                    ))
+                    db.add(
+                        StockMovement(
+                            item_id=line.item_id,
+                            warehouse_id=cc.warehouse_id,
+                            movement_type=MovementType.ADJUSTMENT,
+                            quantity=line.counted_quantity,
+                            reference=f"CC-{cc_id}",
+                            notes=f"Cycle count adjustment (variance: {line.variance})",
+                        )
+                    )
 
     cc.status = "completed"
     cc.completed_at = datetime.now(timezone.utc)

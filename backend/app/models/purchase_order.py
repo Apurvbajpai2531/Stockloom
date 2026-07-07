@@ -1,6 +1,15 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Numeric, Enum, Text
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    DateTime,
+    Numeric,
+    Enum,
+    Text,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -28,14 +37,20 @@ class PurchaseOrder(Base):
 
     supplier = relationship("Supplier")
     warehouse = relationship("Warehouse")
-    lines = relationship("PurchaseOrderLine", back_populates="purchase_order", cascade="all, delete-orphan")
+    lines = relationship(
+        "PurchaseOrderLine",
+        back_populates="purchase_order",
+        cascade="all, delete-orphan",
+    )
 
 
 class PurchaseOrderLine(Base):
     __tablename__ = "purchase_order_lines"
 
     id = Column(Integer, primary_key=True, index=True)
-    purchase_order_id = Column(Integer, ForeignKey("purchase_orders.id"), nullable=False)
+    purchase_order_id = Column(
+        Integer, ForeignKey("purchase_orders.id"), nullable=False
+    )
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
     quantity_ordered = Column(Integer, nullable=False)
     unit_cost = Column(Numeric(12, 2), nullable=False, default=0)

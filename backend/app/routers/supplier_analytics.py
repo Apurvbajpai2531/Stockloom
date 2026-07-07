@@ -35,9 +35,7 @@ def supplier_performance(db: Session = Depends(get_db)):
         items = db.query(Item).filter(Item.supplier_id == sup.id).all()
         item_count = len(items)
 
-        inv_value = sum(
-            float(i.unit_price) * totals.get(i.id, 0) for i in items
-        )
+        inv_value = sum(float(i.unit_price) * totals.get(i.id, 0) for i in items)
 
         open_pos = (
             db.query(func.count(PurchaseOrder.id))
@@ -45,7 +43,8 @@ def supplier_performance(db: Session = Depends(get_db)):
                 PurchaseOrder.supplier_id == sup.id,
                 PurchaseOrder.status.in_([POStatus.DRAFT, POStatus.ORDERED]),
             )
-            .scalar() or 0
+            .scalar()
+            or 0
         )
         received_pos = (
             db.query(func.count(PurchaseOrder.id))
@@ -53,7 +52,8 @@ def supplier_performance(db: Session = Depends(get_db)):
                 PurchaseOrder.supplier_id == sup.id,
                 PurchaseOrder.status == POStatus.RECEIVED,
             )
-            .scalar() or 0
+            .scalar()
+            or 0
         )
 
         # Avg fulfillment days (created_at → received_at)
@@ -79,17 +79,19 @@ def supplier_performance(db: Session = Depends(get_db)):
         total_pos = open_pos + received_pos
         score = round((received_pos / total_pos) * 100) if total_pos > 0 else None
 
-        results.append({
-            "supplier_id": sup.id,
-            "supplier_name": sup.name,
-            "contact_email": sup.contact_email,
-            "item_count": item_count,
-            "inventory_value": round(inv_value, 2),
-            "open_purchase_orders": open_pos,
-            "received_purchase_orders": received_pos,
-            "avg_fulfillment_days": avg_days,
-            "reliability_score": score,
-        })
+        results.append(
+            {
+                "supplier_id": sup.id,
+                "supplier_name": sup.name,
+                "contact_email": sup.contact_email,
+                "item_count": item_count,
+                "inventory_value": round(inv_value, 2),
+                "open_purchase_orders": open_pos,
+                "received_purchase_orders": received_pos,
+                "avg_fulfillment_days": avg_days,
+                "reliability_score": score,
+            }
+        )
 
     results.sort(key=lambda x: x["inventory_value"], reverse=True)
     return results
@@ -110,7 +112,9 @@ def inventory_turnover(db: Session = Depends(get_db)):
         .all()
     )
     outbound_by_item = dict(
-        db.query(StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0))
+        db.query(
+            StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0)
+        )
         .filter(
             StockMovement.movement_type == MovementType.OUTBOUND,
             StockMovement.created_at >= cutoff,
@@ -127,27 +131,33 @@ def inventory_turnover(db: Session = Depends(get_db)):
         if not items:
             continue
 
-        cogs = sum(
-            float(i.unit_price) * outbound_by_item.get(i.id, 0) for i in items
-        )
-        avg_inv_value = sum(
-            float(i.unit_price) * totals.get(i.id, 0) for i in items
-        )
+        cogs = sum(float(i.unit_price) * outbound_by_item.get(i.id, 0) for i in items)
+        avg_inv_value = sum(float(i.unit_price) * totals.get(i.id, 0) for i in items)
 
         turnover = round(cogs / avg_inv_value, 2) if avg_inv_value > 0 else 0
         # GMROI assumes 40% gross margin (typical for distribution)
         gross_margin = cogs * 0.4
         gmroi = round(gross_margin / avg_inv_value, 2) if avg_inv_value > 0 else 0
 
-        results.append({
-            "category": cat.name,
-            "item_count": len(items),
-            "cogs_annual": round(cogs, 2),
-            "avg_inventory_value": round(avg_inv_value, 2),
-            "turnover_ratio": turnover,
-            "gmroi": gmroi,
-            "health": "excellent" if turnover >= 6 else ("good" if turnover >= 3 else ("slow" if turnover >= 1 else "dead")),
-        })
+        results.append(
+            {
+                "category": cat.name,
+                "item_count": len(items),
+                "cogs_annual": round(cogs, 2),
+                "avg_inventory_value": round(avg_inv_value, 2),
+                "turnover_ratio": turnover,
+                "gmroi": gmroi,
+                "health": (
+                    "excellent"
+                    if turnover >= 6
+                    else (
+                        "good"
+                        if turnover >= 3
+                        else ("slow" if turnover >= 1 else "dead")
+                    )
+                ),
+            }
+        )
 
     results.sort(key=lambda x: x["turnover_ratio"], reverse=True)
     return results
@@ -159,8 +169,8 @@ def dead_stock_report(db: Session = Depends(get_db)):
     cutoff = datetime.now(timezone.utc) - timedelta(days=60)
 
     active_item_ids = set(
-        row[0] for row in
-        db.query(StockMovement.item_id)
+        row[0]
+        for row in db.query(StockMovement.item_id)
         .filter(
             StockMovement.movement_type == MovementType.OUTBOUND,
             StockMovement.created_at >= cutoff,
@@ -183,15 +193,21 @@ def dead_stock_report(db: Session = Depends(get_db)):
         if qty <= 0:
             continue
         tied_capital = float(item.unit_price) * qty
-        dead.append({
-            "item_id": item.id,
-            "sku": item.sku,
-            "name": item.name,
-            "quantity": qty,
-            "unit_price": float(item.unit_price),
-            "tied_capital": round(tied_capital, 2),
-            "days_idle": 60,
-        })
+        dead.append(
+            {
+                "item_id": item.id,
+                "sku": item.sku,
+                "name": item.name,
+                "quantity": qty,
+                "unit_price": float(item.unit_price),
+                "tied_capital": round(tied_capital, 2),
+                "days_idle": 60,
+            }
+        )
 
     dead.sort(key=lambda x: x["tied_capital"], reverse=True)
-    return {"count": len(dead), "total_tied_capital": round(sum(d["tied_capital"] for d in dead), 2), "items": dead}
+    return {
+        "count": len(dead),
+        "total_tied_capital": round(sum(d["tied_capital"] for d in dead), 2),
+        "items": dead,
+    }

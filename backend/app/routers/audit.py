@@ -29,7 +29,11 @@ def recent_activity_summary(limit: int = 10, db: Session = Depends(get_db)):
     logs = db.query(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit).all()
     return [
         {
-            "icon": "add_circle" if "create" in log.action else ("delete" if "delete" in log.action else "edit"),
+            "icon": (
+                "add_circle"
+                if "create" in log.action
+                else ("delete" if "delete" in log.action else "edit")
+            ),
             "text": f"{log.username or 'system'} — {log.action.replace('_', ' ')} ({log.details or ''})",
             "time": log.created_at.isoformat() if log.created_at else None,
         }

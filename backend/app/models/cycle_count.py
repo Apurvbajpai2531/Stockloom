@@ -15,7 +15,9 @@ class CycleCount(Base):
     completed_at = Column(DateTime(timezone=True), nullable=True)
 
     warehouse = relationship("Warehouse")
-    lines = relationship("CycleCountLine", back_populates="cycle_count", cascade="all, delete-orphan")
+    lines = relationship(
+        "CycleCountLine", back_populates="cycle_count", cascade="all, delete-orphan"
+    )
 
 
 class CycleCountLine(Base):

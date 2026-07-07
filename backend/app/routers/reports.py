@@ -38,14 +38,16 @@ def export_items_csv(db: Session = Depends(get_db)):
     )
     rows = []
     for item in db.query(Item).all():
-        rows.append({
-            "sku": item.sku,
-            "name": item.name,
-            "unit": item.unit,
-            "unit_price": float(item.unit_price),
-            "total_quantity": totals.get(item.id, 0),
-            "reorder_threshold": item.reorder_threshold,
-        })
+        rows.append(
+            {
+                "sku": item.sku,
+                "name": item.name,
+                "unit": item.unit,
+                "unit_price": float(item.unit_price),
+                "total_quantity": totals.get(item.id, 0),
+                "reorder_threshold": item.reorder_threshold,
+            }
+        )
     return _csv_response(rows, "items_report.csv")
 
 
@@ -53,17 +55,18 @@ def export_items_csv(db: Session = Depends(get_db)):
 def export_movements_csv(db: Session = Depends(get_db)):
     rows = []
     for m in db.query(StockMovement).order_by(StockMovement.created_at.desc()).all():
-        rows.append({
-            "created_at": m.created_at.isoformat() if m.created_at else "",
-            "item_id": m.item_id,
-            "warehouse_id": m.warehouse_id,
-            "destination_warehouse_id": m.destination_warehouse_id or "",
-            "movement_type": m.movement_type.value,
-            "quantity": m.quantity,
-            "reference": m.reference or "",
-        })
+        rows.append(
+            {
+                "created_at": m.created_at.isoformat() if m.created_at else "",
+                "item_id": m.item_id,
+                "warehouse_id": m.warehouse_id,
+                "destination_warehouse_id": m.destination_warehouse_id or "",
+                "movement_type": m.movement_type.value,
+                "quantity": m.quantity,
+                "reference": m.reference or "",
+            }
+        )
     return _csv_response(rows, "movements_report.csv")
-
 
 
 @router.post("/reports/import-items")
@@ -115,11 +118,16 @@ def valuation_by_category(db: Session = Depends(get_db)):
         qty = totals.get(item.id, 0)
         value = float(item.unit_price) * qty
         if cat_name not in result:
-            result[cat_name] = {"category": cat_name, "total_units": 0, "total_value": 0.0}
+            result[cat_name] = {
+                "category": cat_name,
+                "total_units": 0,
+                "total_value": 0.0,
+            }
         result[cat_name]["total_units"] += qty
         result[cat_name]["total_value"] += value
 
     return sorted(result.values(), key=lambda x: x["total_value"], reverse=True)
+
 
 @router.get("/reports/abc-analysis")
 def abc_analysis(db: Session = Depends(get_db)):
@@ -146,7 +154,6 @@ def abc_analysis(db: Session = Depends(get_db)):
         i["class"] = "A" if pct <= 80 else ("B" if pct <= 95 else "C")
 
     return items_value
-
 
 
 @router.get("/reports/reorder-suggestions")
@@ -181,16 +188,18 @@ def reorder_suggestions(db: Session = Depends(get_db)):
             }
 
         cost = float(item.unit_price) * suggested_qty
-        suggestions_by_supplier[key]["items"].append({
-            "item_id": item.id,
-            "sku": item.sku,
-            "name": item.name,
-            "current_quantity": qty,
-            "reorder_threshold": item.reorder_threshold,
-            "suggested_quantity": suggested_qty,
-            "unit_price": float(item.unit_price),
-            "estimated_cost": round(cost, 2),
-        })
+        suggestions_by_supplier[key]["items"].append(
+            {
+                "item_id": item.id,
+                "sku": item.sku,
+                "name": item.name,
+                "current_quantity": qty,
+                "reorder_threshold": item.reorder_threshold,
+                "suggested_quantity": suggested_qty,
+                "unit_price": float(item.unit_price),
+                "estimated_cost": round(cost, 2),
+            }
+        )
         suggestions_by_supplier[key]["estimated_cost"] += cost
 
     result = list(suggestions_by_supplier.values())

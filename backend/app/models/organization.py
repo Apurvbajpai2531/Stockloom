@@ -14,7 +14,9 @@ class Warehouse(Base):
     location = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    stock_levels = relationship("StockLevel", back_populates="warehouse", cascade="all, delete-orphan")
+    stock_levels = relationship(
+        "StockLevel", back_populates="warehouse", cascade="all, delete-orphan"
+    )
 
 
 class Category(Base):
