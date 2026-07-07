@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
       - main
-      
+
 
 
 jobs:
@@ -102,6 +102,10 @@ jobs:
 
     needs: backend
 
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
 
     steps:
 
@@ -112,7 +116,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python-version }}
 
 
       - name: Install frontend dependencies
@@ -147,3 +151,10 @@ jobs:
       - name: Check container logs
         run: |
           docker logs stockloom-fe-container
+
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v5
+        with:
+          name: backend-coverage-${{ matrix.python-version }}
+          path: backend/coverage.xml
