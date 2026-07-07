@@ -74,7 +74,7 @@ def evaluate_rules(db: Session = Depends(get_db)):
     Evaluates all active rules against current stock levels.
     Returns list of triggered rules with context.
     """
-    rules = db.query(AlertRule).filter(AlertRule.is_active == True).all()
+    rules = db.query(AlertRule).filter(AlertRule.is_active).all()
     triggered = []
 
     for rule in rules:

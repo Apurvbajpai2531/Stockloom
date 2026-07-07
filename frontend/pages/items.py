@@ -22,9 +22,9 @@ def render_items():
             view_toggle = ui.button(icon="grid_view", on_click=lambda: switch_view()).props("flat dense")
 
         with ui.row().classes("items-center gap-3 mt-2"):
-            prev_btn = ui.button(icon="chevron_left", on_click=lambda: change_page(-1)).props("flat dense")
+            ui.button(icon="chevron_left", on_click=lambda: change_page(-1)).props("flat dense")
             page_label = ui.label("Page 1")
-            next_btn = ui.button(icon="chevron_right", on_click=lambda: change_page(1)).props("flat dense")
+            ui.button(icon="chevron_right", on_click=lambda: change_page(1)).props("flat dense")
             low_stock_switch = ui.switch("Low stock only")
             auto_switch = ui.switch("Auto-refresh (15s)", value=False)
 
@@ -58,7 +58,8 @@ def render_items():
             if not selected:
                 ui.notify("No items selected", type="warning")
                 return
-            import csv, io
+            import csv
+            import io
             buffer = io.StringIO()
             writer = csv.DictWriter(buffer, fieldnames=["sku", "name", "unit", "unit_price", "total_quantity", "reorder_threshold"])
             writer.writeheader()

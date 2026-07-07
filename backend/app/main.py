@@ -1,9 +1,17 @@
-import logging
 
+import logging
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
+from app.core.database import Base, engine
+from app.core.config import settings
+from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, anomaly, supplier_analytics, rules, price_history, reservations, cycle_count, cost_analysis
+from app.core.database import SessionLocal
+from app.core.auth import ensure_default_admin
+from fastapi import Depends
+from app.core.auth import get_current_user
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,24 +19,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger("stockloom")
 
-from app.core.database import Base, engine
-from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, analytics, anomaly, supplier_analytics, rules, price_history, reservations, cycle_count, cost_analysis
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
-
-from app.core.database import SessionLocal
-from app.core.auth import ensure_default_admin
-from app.routers.dashboard import router as dashboard_public_router
 
 _db = SessionLocal()
 ensure_default_admin(_db)
 _db.close()
 
 app = FastAPI(title=settings.APP_NAME, version="1.0.0")
-
-import os
-
 allowed_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
@@ -38,9 +36,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-from fastapi import Depends
-from app.core.auth import get_current_user
 
 protected = [Depends(get_current_user)]
 

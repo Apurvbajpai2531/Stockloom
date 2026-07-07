@@ -74,7 +74,6 @@ def render_cycle_count():
                                 ui.label(f"System: {line['system_quantity']}").classes("text-xs").style("color:var(--ink-soft)")
                             with ui.row().classes("items-center gap-2"):
                                 if line["is_verified"]:
-                                    variance_color = "#C0463C" if is_variance else "#2F6F6B"
                                     ui.badge(f"Variance: {line['variance']:+d}", color="red" if is_variance else "teal")
                                 else:
                                     counted = ui.number("Counted Qty", value=line["system_quantity"]).classes("w-28")

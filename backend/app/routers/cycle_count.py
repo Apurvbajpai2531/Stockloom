@@ -1,15 +1,12 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from pydantic import BaseModel
-from typing import Optional
 
 from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.cycle_count import CycleCount, CycleCountLine
 from app.models.stock import StockLevel
-from app.models.item import Item
 
 router = APIRouter()
 
@@ -26,8 +23,8 @@ def list_cycle_counts(db: Session = Depends(get_db)):
             "created_by": c.created_by,
             "created_at": c.created_at.isoformat() if c.created_at else None,
             "line_count": len(c.lines),
-            "verified_count": sum(1 for l in c.lines if l.is_verified),
-            "variance_count": sum(1 for l in c.lines if l.variance and l.variance != 0),
+            "verified_count": sum(1 for line in c.lines if line.is_verified),
+            "variance_count": sum(1 for line in c.lines if line.variance and line.variance != 0),
         }
         for c in counts
     ]
@@ -67,16 +64,16 @@ def get_cycle_count(cc_id: int, db: Session = Depends(get_db)):
         "created_at": cc.created_at.isoformat() if cc.created_at else None,
         "lines": [
             {
-                "id": l.id,
-                "item_id": l.item_id,
-                "sku": l.item.sku if l.item else None,
-                "name": l.item.name if l.item else None,
-                "system_quantity": l.system_quantity,
-                "counted_quantity": l.counted_quantity,
-                "variance": l.variance,
-                "is_verified": l.is_verified,
+                "id": line.id,
+                "item_id": line.item_id,
+                "sku": line.item.sku if line.item else None,
+                "name": line.item.name if line.item else None,
+                "system_quantity": line.system_quantity,
+                "counted_quantity": line.counted_quantity,
+                "variance": line.variance,
+                "is_verified": line.is_verified,
             }
-            for l in cc.lines
+            for line in cc.lines
         ],
     }
 

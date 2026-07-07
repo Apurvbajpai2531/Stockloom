@@ -39,7 +39,10 @@ def render_item_detail(item_id: int):
                 ui.label("Quick Stock Adjustment").classes("font-bold")
                 levels = api.get("/stock-levels", params={"item_id": item_id})
                 if levels:
-                    wh_options = {l["warehouse_id"]: f"Warehouse {l['warehouse_id']}" for l in levels}
+                    wh_options = {
+                        level["warehouse_id"]: f"Warehouse {level['warehouse_id']}"
+                        for level in levels
+                        }
                 else:
                     all_warehouses = api.get("/warehouses")
                     wh_options = {w["id"]: f"{w['code']} - {w['name']}" for w in all_warehouses}
@@ -133,7 +136,7 @@ def render_item_detail(item_id: int):
         try:
             price_hist = api.get(f"/price-history/{item_id}")
             if price_hist["history"]:
-                price_chart = ui.echart({
+                ui.echart({
                     "xAxis": {"type": "category", "data": [h["changed_at"][:10] for h in price_hist["history"]]},
                     "yAxis": {"type": "value"},
                     "series": [{
@@ -145,7 +148,7 @@ def render_item_detail(item_id: int):
                     }],
                     "tooltip": {"trigger": "axis"},
                 }).classes("w-full h-48")
-                ph_table = ui.table(
+                ui.table(
                     columns=[
                         {"name": "changed_at", "label": "Date", "field": "changed_at"},
                         {"name": "old_price", "label": "Old Price", "field": "old_price"},

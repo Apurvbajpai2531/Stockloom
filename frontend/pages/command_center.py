@@ -159,7 +159,7 @@ def _render_warehouse_grid(warehouses: list, wh_totals: dict, max_units: int):
                         f'box-shadow: {f"0 1px 3px {color}40" if i < filled_cells else "none"};">'
                         f'</div>'
                     )
-                html += f'</div>'
+                html += '</div>'
                 html += f'<div style="font-size:10px;color:#9A9C9F;font-family:JetBrains Mono,monospace;margin-top:4px;">{total:,} units • {fill_pct*100:.0f}% capacity</div>'
                 ui.html(html)
 

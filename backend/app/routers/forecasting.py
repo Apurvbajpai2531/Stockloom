@@ -126,14 +126,14 @@ def rebalance_suggestions(db: Session = Depends(get_db)):
         if len(levels) < 2:
             continue
 
-        surplus = [l for l in levels if l.quantity > item.reorder_threshold * 1.5]
-        deficit = [l for l in levels if l.quantity <= item.reorder_threshold]
+        surplus = [level for level in levels if level.quantity > item.reorder_threshold * 1.5]
+        deficit = [level for level in levels if level.quantity <= item.reorder_threshold]
 
         if not surplus or not deficit:
             continue
 
-        surplus.sort(key=lambda l: l.quantity, reverse=True)
-        deficit.sort(key=lambda l: l.quantity)
+        surplus.sort(key=lambda level: level.quantity, reverse=True)
+        deficit.sort(key=lambda level: level.quantity)
 
         source = surplus[0]
         target = deficit[0]

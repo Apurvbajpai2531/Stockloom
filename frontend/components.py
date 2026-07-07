@@ -93,7 +93,7 @@ def render_header(active: str = ""):
             ui.button(icon="search", on_click=do_search).props("flat round color=white")
 
             from api_client import api as _api
-            bell_btn = ui.button(icon="notifications", on_click=lambda: open_notifications()).props("flat round color=white")
+            ui.button(icon="notifications", on_click=lambda: open_notifications()).props("flat round color=white")
 
             def open_notifications():
                 with ui.dialog() as dialog, ui.card().classes("w-96"):

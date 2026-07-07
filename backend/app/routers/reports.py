@@ -10,9 +10,7 @@ from sqlalchemy import func
 from fastapi import UploadFile, File
 from app.models.item import Item
 from app.core.database import get_db
-from app.models.item import Item
 from app.models.stock import StockLevel, StockMovement
-from app.models.organization import Category
 
 router = APIRouter()
 

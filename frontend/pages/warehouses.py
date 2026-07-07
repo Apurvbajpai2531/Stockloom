@@ -18,7 +18,8 @@ def render_warehouses():
             ui.button("Add Warehouse", icon="add", on_click=lambda: open_dialog())
 
         def export_warehouses():
-            import csv, io
+            import csv
+            import io
             rows = api.get("/warehouses")
             buffer = io.StringIO()
             if rows:

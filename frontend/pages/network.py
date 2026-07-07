@@ -1,5 +1,4 @@
 from nicegui import ui
-import json
 
 from api_client import api
 from components import render_header

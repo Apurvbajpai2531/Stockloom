@@ -69,7 +69,7 @@ def render_rules():
                         return
                     with rules_container:
                         for r in rule_list:
-                            cond_color = "#C0463C" if r["condition"] == "below" else ("#2F6F6B" if r["condition"] == "above" else "#2563eb")
+                            "#C0463C" if r["condition"] == "below" else ("#2F6F6B" if r["condition"] == "above" else "#2563eb")
                             with ui.card().classes("p-3 w-full"):
                                 with ui.row().classes("items-center justify-between"):
                                     with ui.row().classes("items-center gap-2"):

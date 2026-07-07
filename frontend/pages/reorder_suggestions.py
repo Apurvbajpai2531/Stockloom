@@ -44,7 +44,7 @@ def render_reorder_suggestions():
                                 "color:var(--amber);"
                             )
 
-                        item_table = ui.table(
+                        ui.table(
                             columns=[
                                 {"name": "sku", "label": "SKU", "field": "sku"},
                                 {"name": "name", "label": "Name", "field": "name"},

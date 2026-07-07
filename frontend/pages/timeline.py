@@ -71,7 +71,7 @@ def render_timeline():
             movements = api.get("/stock-movements", params={"limit": 200})
             pos = api.get("/purchase-orders")
             forecast = api.get("/forecasting/stockout-risk")
-            items_list = api.get("/items", params={"limit": 50})
+            api.get("/items", params={"limit": 50})
         except Exception as e:
             container.content = f'<div style="color:red;padding:20px;">Error: {e}</div>'
             return
@@ -79,7 +79,6 @@ def render_timeline():
         now = datetime.datetime.now()
         window_start = now - datetime.timedelta(days=14)
         window_end = now + datetime.timedelta(days=14)
-        total_days = 28
 
         def day_pct(dt_str, fmt="%Y-%m-%dT%H:%M:%S"):
             try:

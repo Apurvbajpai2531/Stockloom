@@ -102,7 +102,6 @@ def demand_forecast_calendar(db: Session = Depends(get_db)):
     Predicts demand for next 30 days per item using 30-day velocity.
     Returns calendar-ready data: {date, predicted_units, items_at_risk}.
     """
-    from datetime import date as date_type
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)
     outbound_by_item = dict(

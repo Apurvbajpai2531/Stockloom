@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -9,7 +8,6 @@ from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.reservation import StockReservation
 from app.models.stock import StockLevel
-from app.models.item import Item
 
 router = APIRouter()
 

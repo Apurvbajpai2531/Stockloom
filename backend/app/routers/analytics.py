@@ -6,7 +6,6 @@ from sqlalchemy import func
 from app.core.database import get_db
 from app.models.item import Item
 from app.models.stock import StockLevel, StockMovement, MovementType
-from app.models.organization import Warehouse
 from app.models.purchase_order import PurchaseOrder
 
 router = APIRouter()

@@ -82,7 +82,6 @@ def holding_cost_summary(db: Session = Depends(get_db)):
         holding = float(item.unit_price) * qty * HOLDING_COST_RATE
         total_holding += holding
 
-        from app.models.organization import Category
         cat_name = item.category.name if item.category else "Uncategorized"
         category_costs[cat_name] = category_costs.get(cat_name, 0) + holding
 

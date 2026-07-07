@@ -81,7 +81,7 @@ def render_dna():
             cat_map[cat["id"]] = cat_colors[i % len(cat_colors)]
 
         max_qty = max((item.get("total_quantity", 0) for item in items), default=1) or 1
-        max_price = max((float(item.get("unit_price", 0)) for item in items), default=1) or 1
+        max((float(item.get("unit_price", 0)) for item in items), default=1) or 1
 
         cells = ""
         for item in items:

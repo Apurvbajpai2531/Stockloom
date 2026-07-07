@@ -1,4 +1,3 @@
-import json
 from nicegui import ui
 
 from api_client import api

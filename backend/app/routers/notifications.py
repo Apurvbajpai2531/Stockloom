@@ -14,7 +14,7 @@ router = APIRouter()
 def list_notifications(unread_only: bool = False, db: Session = Depends(get_db)):
     q = db.query(Notification)
     if unread_only:
-        q = q.filter(Notification.is_read == False)
+        q = q.filter(not Notification.is_read)
     notifs = q.order_by(Notification.created_at.desc()).limit(50).all()
     return [
         {
@@ -49,7 +49,7 @@ def generate_low_stock_notifications(db: Session = Depends(get_db)):
         if qty <= item.reorder_threshold:
             existing = (
                 db.query(Notification)
-                .filter(Notification.title == f"Low stock: {item.sku}", Notification.is_read == False)
+                .filter(Notification.title == f"Low stock: {item.sku}", not Notification.is_read)
                 .first()
             )
             if existing:

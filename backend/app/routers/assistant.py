@@ -58,9 +58,9 @@ def assistant_query(payload: dict, db: Session = Depends(get_db)):
         if not levels:
             return {"answer": f"{item.sku} ({item.name}) has no recorded stock in any warehouse."}
         breakdown = []
-        for l in levels:
-            wh = db.query(Warehouse).get(l.warehouse_id)
-            breakdown.append(f"{wh.name if wh else 'Unknown warehouse'}: {l.quantity} units")
+        for log in levels:
+            wh = db.query(Warehouse).get(log.warehouse_id)
+            breakdown.append(f"{wh.name if wh else 'Unknown warehouse'}: {log.quantity} units")
         total_qty = totals.get(item.id, 0)
         return {
             "answer": f"{item.sku} — {item.name} has {total_qty} units total, across:",
@@ -136,7 +136,6 @@ def assistant_query(payload: dict, db: Session = Depends(get_db)):
 
     # Intent: supplier lookup
     if "supplier" in text:
-        from app.models.organization import Supplier
         sku_match3 = re.search(r"sku[-\s]?(\w+)", text)
         if sku_match3:
             search_term = sku_match3.group(0).replace(" ", "-").upper()

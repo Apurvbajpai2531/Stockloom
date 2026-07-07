@@ -64,7 +64,7 @@ def render_purchase_orders():
 
                 def add_line():
                     with lines_container:
-                        with ui.row().classes("gap-2 items-end w-full") as row:
+                        with ui.row().classes("gap-2 items-end w-full"):
                             item_sel = ui.select(item_options, label="Item").classes("flex-1")
                             qty = ui.number("Qty", value=1).classes("w-24")
                             cost = ui.number("Unit Cost", value=0, format="%.2f").classes("w-28")
