@@ -8,7 +8,8 @@ def render_timeline():
     if not require_login():
         return
 
-    ui.add_head_html('''
+    ui.add_head_html(
+        """
     <style>
     body { background: #0a0a0f !important; }
     .tl-container {
@@ -62,7 +63,8 @@ def render_timeline():
         text-align: center; border-left: 1px solid #ffffff08;
     }
     </style>
-    ''')
+    """
+    )
 
     container = ui.html("")
 
@@ -98,15 +100,19 @@ def render_timeline():
             d = window_start + datetime.timedelta(days=i)
             date_ticks += f'<div class="tl-date-tick">{d.strftime("%d %b")}</div>'
 
-        today_pct = (now - window_start).total_seconds() / (window_end - window_start).total_seconds() * 100
+        today_pct = (
+            (now - window_start).total_seconds()
+            / (window_end - window_start).total_seconds()
+            * 100
+        )
 
         rows_html = ""
 
         # Section 1: Recent Movements
-        rows_html += '''
+        rows_html += """
         <div style="font-size:9px;color:#E8A33D;letter-spacing:0.1em;padding:8px 0 4px 0;
             border-bottom:1px solid #E8A33D20;">STOCK MOVEMENTS (last 14 days)</div>
-        '''
+        """
         type_colors = {
             "inbound": "#2F6F6B",
             "outbound": "#E8A33D",
@@ -122,7 +128,7 @@ def render_timeline():
             width = max(3, min(8, m.get("quantity", 1) / 50))
             item_id = m.get("item_id", "?")
             label = f"#{item_id} {mtype[:3].upper()}"
-            rows_html += f'''
+            rows_html += f"""
             <div class="tl-row">
                 <div class="tl-label">{label} +{m.get("quantity")} u</div>
                 <div class="tl-bar-track">
@@ -131,13 +137,13 @@ def render_timeline():
                         background:{color}30;border-left:2px solid {color};">
                     </div>
                 </div>
-            </div>'''
+            </div>"""
 
         # Section 2: Purchase Orders
-        rows_html += '''
+        rows_html += """
         <div style="font-size:9px;color:#2563eb;letter-spacing:0.1em;padding:8px 0 4px 0;
             border-bottom:1px solid #2563eb20;margin-top:8px;">PURCHASE ORDERS</div>
-        '''
+        """
         po_colors = {
             "draft": "#9A9C9F",
             "ordered": "#2563eb",
@@ -151,7 +157,7 @@ def render_timeline():
             status = po.get("status", "draft")
             color = po_colors.get(status, "#fff")
             label = po.get("po_number", "PO")
-            rows_html += f'''
+            rows_html += f"""
             <div class="tl-row">
                 <div class="tl-label">{label}</div>
                 <div class="tl-bar-track">
@@ -161,22 +167,30 @@ def render_timeline():
                         <span style="color:{color};">{status.upper()}</span>
                     </div>
                 </div>
-            </div>'''
+            </div>"""
 
         # Section 3: Stockout Predictions
-        rows_html += '''
+        rows_html += """
         <div style="font-size:9px;color:#C0463C;letter-spacing:0.1em;padding:8px 0 4px 0;
             border-bottom:1px solid #C0463C20;margin-top:8px;">PREDICTED STOCKOUTS (next 14 days)</div>
-        '''
-        at_risk = [f for f in forecast if f.get("risk") in ("critical", "warning") and f.get("days_until_stockout")]
+        """
+        at_risk = [
+            f
+            for f in forecast
+            if f.get("risk") in ("critical", "warning") and f.get("days_until_stockout")
+        ]
         for f in sorted(at_risk, key=lambda x: x["days_until_stockout"])[:15]:
             days = f["days_until_stockout"]
             stockout_dt = now + datetime.timedelta(days=days)
-            pct = (stockout_dt - window_start).total_seconds() / (window_end - window_start).total_seconds() * 100
+            pct = (
+                (stockout_dt - window_start).total_seconds()
+                / (window_end - window_start).total_seconds()
+                * 100
+            )
             if pct < 0 or pct > 100:
                 continue
             color = "#C0463C" if f["risk"] == "critical" else "#E8A33D"
-            rows_html += f'''
+            rows_html += f"""
             <div class="tl-row">
                 <div class="tl-label" style="color:{color};">{f["sku"]}</div>
                 <div class="tl-bar-track">
@@ -189,14 +203,14 @@ def render_timeline():
                         {f["sku"]} out in {days:.0f}d
                     </div>
                 </div>
-            </div>'''
+            </div>"""
 
         if not at_risk:
             rows_html += '<div style="font-size:10px;color:#2F6F6B;padding:6px 0;">No predicted stockouts in the next 14 days</div>'
 
         now_str = datetime.datetime.now().strftime("%H:%M:%S")
 
-        html = f'''
+        html = f"""
         <div class="tl-container">
             <button class="tl-exit" onclick="window.location.href='/dashboard'">EXIT TIMELINE</button>
             <div class="tl-header">
@@ -208,7 +222,7 @@ def render_timeline():
             <div class="tl-date-header">{date_ticks}</div>
             <div class="tl-track">{rows_html}</div>
         </div>
-        '''
+        """
         container.content = html
 
     build()

@@ -21,7 +21,9 @@ def render_purchase_orders():
         wh_options = {w["id"]: f"{w['code']} - {w['name']}" for w in warehouses}
         sup_options = {s["id"]: s["name"] for s in suppliers}
 
-        ui.button("New Purchase Order", icon="add", on_click=lambda: open_po_dialog()).classes("self-end")
+        ui.button(
+            "New Purchase Order", icon="add", on_click=lambda: open_po_dialog()
+        ).classes("self-end")
 
         columns = [
             {"name": "po_number", "label": "PO #", "field": "po_number"},
@@ -33,14 +35,14 @@ def render_purchase_orders():
         table = ui.table(columns=columns, rows=[], row_key="id").classes("w-full")
         table.add_slot(
             "body-cell-actions",
-            '''
+            """
             <q-td :props="props">
                 <q-btn v-if="props.row.status === 'draft'" dense flat label="Mark Ordered" @click="() => $parent.$emit('mark-ordered', props.row)" />
                 <q-btn v-if="props.row.status !== 'received' && props.row.status !== 'cancelled'" dense flat color="green" label="Receive" @click="() => $parent.$emit('receive', props.row)" />
                 <q-btn v-if="props.row.status !== 'received' && props.row.status !== 'cancelled'" dense flat color="red" label="Cancel" @click="() => $parent.$emit('cancel', props.row)" />
                 <q-btn dense flat icon="picture_as_pdf" @click="() => $parent.$emit('download-pdf', props.row)" />
             </q-td>
-            ''',
+            """,
         )
 
         def refresh():
@@ -65,9 +67,13 @@ def render_purchase_orders():
                 def add_line():
                     with lines_container:
                         with ui.row().classes("gap-2 items-end w-full"):
-                            item_sel = ui.select(item_options, label="Item").classes("flex-1")
+                            item_sel = ui.select(item_options, label="Item").classes(
+                                "flex-1"
+                            )
                             qty = ui.number("Qty", value=1).classes("w-24")
-                            cost = ui.number("Unit Cost", value=0, format="%.2f").classes("w-28")
+                            cost = ui.number(
+                                "Unit Cost", value=0, format="%.2f"
+                            ).classes("w-28")
                     lines.append((item_sel, qty, cost))
 
                 add_line()
@@ -84,22 +90,27 @@ def render_purchase_orders():
                     line_payload = []
                     for item_sel, qty, cost in lines:
                         if item_sel.value:
-                            line_payload.append({
-                                "item_id": item_sel.value,
-                                "quantity_ordered": int(qty.value),
-                                "unit_cost": cost.value,
-                            })
+                            line_payload.append(
+                                {
+                                    "item_id": item_sel.value,
+                                    "quantity_ordered": int(qty.value),
+                                    "unit_cost": cost.value,
+                                }
+                            )
                     if not line_payload:
                         error_label.text = "Add at least one valid line item"
                         return
                     try:
-                        api.post("/purchase-orders", {
-                            "po_number": po_number.value.strip(),
-                            "supplier_id": supplier.value,
-                            "warehouse_id": warehouse.value,
-                            "notes": notes.value,
-                            "lines": line_payload,
-                        })
+                        api.post(
+                            "/purchase-orders",
+                            {
+                                "po_number": po_number.value.strip(),
+                                "supplier_id": supplier.value,
+                                "warehouse_id": warehouse.value,
+                                "notes": notes.value,
+                                "lines": line_payload,
+                            },
+                        )
                         ui.notify("Purchase order created", type="positive")
                         dialog.close()
                         refresh()
@@ -124,8 +135,13 @@ def render_purchase_orders():
         table.on("cancel", lambda e: handle_action("cancel", e.args))
 
         import os
+
         API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
-        table.on("download-pdf", lambda e: ui.navigate.to(f"{API_BASE}/purchase-orders/{e.args['id']}/pdf", new_tab=True))
+        table.on(
+            "download-pdf",
+            lambda e: ui.navigate.to(
+                f"{API_BASE}/purchase-orders/{e.args['id']}/pdf", new_tab=True
+            ),
+        )
 
         refresh()
-        

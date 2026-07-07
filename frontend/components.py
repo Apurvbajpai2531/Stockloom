@@ -3,18 +3,25 @@ from nicegui import ui
 
 def render_header(active: str = ""):
     from api_client import get_token, API_BASE
+
     token = get_token() or ""
-    ui.run_javascript(f"window.__stockloom_token = '{token}'; window.__API_BASE__ = '{API_BASE}';")
+    ui.run_javascript(
+        f"window.__stockloom_token = '{token}'; window.__API_BASE__ = '{API_BASE}';"
+    )
     _add_command_palette()
     _add_assistant_widget()
-    drawer = ui.left_drawer(value=True).classes("p-0").style(
-        "background:#1C2230; width:230px; border-right:3px solid #E8A33D;"
+    drawer = (
+        ui.left_drawer(value=True)
+        .classes("p-0")
+        .style("background:#1C2230; width:230px; border-right:3px solid #E8A33D;")
     )
     with drawer:
         with ui.column().classes("w-full p-4 gap-1"):
             with ui.row().classes("items-center gap-2 mb-6"):
                 ui.icon("warehouse").style("color:#E8A33D").classes("text-3xl")
-                ui.label("STOCKLOOM").classes("text-lg font-bold text-white tracking-wide")
+                ui.label("STOCKLOOM").classes(
+                    "text-lg font-bold text-white tracking-wide"
+                )
 
             _nav_link("Dashboard", "/dashboard", "dashboard", active)
             _nav_link("Items", "/items", "inventory_2", active)
@@ -25,7 +32,9 @@ def render_header(active: str = ""):
             _nav_link("Reports", "/reports", "description", active)
             _nav_link("Audit Log", "/audit-log", "history", active)
             _nav_link("Settings", "/settings", "settings", active)
-            _nav_link("Reorder Suggestions", "/reorder-suggestions", "shopping_bag", active)
+            _nav_link(
+                "Reorder Suggestions", "/reorder-suggestions", "shopping_bag", active
+            )
             _nav_link("Forecasting", "/forecasting", "insights", active)
             _nav_link("Rebalancing", "/rebalancing", "swap_horiz", active)
             _nav_link("Network View", "/network", "hub", active)
@@ -35,23 +44,28 @@ def render_header(active: str = ""):
             _nav_link("War Room", "/warroom", "emergency", active)
             _nav_link("Inventory DNA", "/dna", "biotech", active)
             _nav_link("Supply Chain Timeline", "/timeline", "timeline", active)
-            _nav_link("Supplier Intelligence", "/supplier-intelligence", "store", active)
+            _nav_link(
+                "Supplier Intelligence", "/supplier-intelligence", "store", active
+            )
             _nav_link("Alert Rules", "/rules", "rule", active)
             _nav_link("Reservations", "/reservations", "bookmark", active)
             _nav_link("Cycle Count", "/cycle-count", "fact_check", active)
             _nav_link("Cost Analysis", "/cost-analysis", "calculate", active)
 
-
             ui.element("div").classes("flex-grow")
 
             with ui.row().classes("items-center gap-2 mt-6 px-2"):
                 dark = ui.dark_mode()
-                icon_btn = ui.button(icon="dark_mode", on_click=lambda: toggle_dark()).props("flat round color=white")
+                icon_btn = ui.button(
+                    icon="dark_mode", on_click=lambda: toggle_dark()
+                ).props("flat round color=white")
                 ui.label("Theme").classes("text-white text-sm")
 
                 def toggle_dark():
                     dark.toggle()
-                    icon_btn.props(f"icon={'light_mode' if dark.value else 'dark_mode'}")
+                    icon_btn.props(
+                        f"icon={'light_mode' if dark.value else 'dark_mode'}"
+                    )
 
             from api_client import clear_token
 
@@ -60,28 +74,42 @@ def render_header(active: str = ""):
                 ui.navigate.to("/")
 
             with ui.row().classes("items-center gap-2 px-2 mt-1"):
-                ui.button("Logout", icon="logout", on_click=logout).props("flat color=white").classes("text-sm")
+                ui.button("Logout", icon="logout", on_click=logout).props(
+                    "flat color=white"
+                ).classes("text-sm")
 
     with ui.header().classes("px-4 py-3 items-center justify-between").style(
         "background:#1C2230; border-bottom:3px solid #E8A33D;"
     ):
-        
 
         with ui.row().classes("items-center gap-3"):
-            ui.button(icon="menu", on_click=drawer.toggle).props("flat round color=white").classes("md:hidden")
+            ui.button(icon="menu", on_click=drawer.toggle).props(
+                "flat round color=white"
+            ).classes("md:hidden")
             ui.label("StockLoom Operations").classes("text-white font-semibold")
-            ui.label("⌘K / Ctrl+K for quick nav").classes("text-xs hidden md:block").style("color:#9A9C9F;")
+            ui.label("⌘K / Ctrl+K for quick nav").classes(
+                "text-xs hidden md:block"
+            ).style("color:#9A9C9F;")
             with ui.row().classes("items-center gap-2"):
-                search_box = ui.input(placeholder="Search items by SKU or name...").props("dense standout").classes("w-64").style(
-                "background: rgba(255,255,255,0.1); border-radius: 8px; --q-field-text-color: white;"
-            )
+                search_box = (
+                    ui.input(placeholder="Search items by SKU or name...")
+                    .props("dense standout")
+                    .classes("w-64")
+                    .style(
+                        "background: rgba(255,255,255,0.1); border-radius: 8px; --q-field-text-color: white;"
+                    )
+                )
 
             async def do_search():
                 if not search_box.value or not search_box.value.strip():
                     return
                 from api_client import api
+
                 try:
-                    results = api.get("/items", params={"search": search_box.value.strip(), "limit": 5})
+                    results = api.get(
+                        "/items",
+                        params={"search": search_box.value.strip(), "limit": 5},
+                    )
                     if results:
                         ui.navigate.to(f"/items/{results[0]['id']}")
                     else:
@@ -93,39 +121,57 @@ def render_header(active: str = ""):
             ui.button(icon="search", on_click=do_search).props("flat round color=white")
 
             from api_client import api as _api
-            ui.button(icon="notifications", on_click=lambda: open_notifications()).props("flat round color=white")
+
+            ui.button(
+                icon="notifications", on_click=lambda: open_notifications()
+            ).props("flat round color=white")
 
             def open_notifications():
                 with ui.dialog() as dialog, ui.card().classes("w-96"):
                     ui.label("Notifications").classes("text-lg font-bold")
                     try:
-                        notifs = _api.get("/notifications", params={"unread_only": True})
+                        notifs = _api.get(
+                            "/notifications", params={"unread_only": True}
+                        )
                     except Exception:
                         notifs = []
                     if not notifs:
                         ui.label("No new notifications").style("color:var(--ink-soft)")
                     for n in notifs:
                         color = "#C0463C" if n["severity"] == "critical" else "#E8A33D"
-                        with ui.row().classes("items-start gap-2 w-full py-2").style("border-bottom:1px solid var(--line);"):
-                            ui.icon("circle").style(f"color:{color}; font-size:10px; margin-top:4px;")
+                        with ui.row().classes("items-start gap-2 w-full py-2").style(
+                            "border-bottom:1px solid var(--line);"
+                        ):
+                            ui.icon("circle").style(
+                                f"color:{color}; font-size:10px; margin-top:4px;"
+                            )
                             with ui.column().classes("flex-grow"):
                                 ui.label(n["title"]).classes("font-semibold text-sm")
-                                ui.label(n["message"]).classes("text-xs").style("color:var(--ink-soft)")
+                                ui.label(n["message"]).classes("text-xs").style(
+                                    "color:var(--ink-soft)"
+                                )
                     ui.button("Close", on_click=dialog.close).classes("mt-2")
                 dialog.open()
 
 
 def _nav_link(label: str, target: str, icon: str, active: str):
     is_active = active == label
-    bg = "background: rgba(232,163,61,0.15); border-left: 3px solid #E8A33D;" if is_active else "border-left: 3px solid transparent;"
+    bg = (
+        "background: rgba(232,163,61,0.15); border-left: 3px solid #E8A33D;"
+        if is_active
+        else "border-left: 3px solid transparent;"
+    )
     with ui.link(target=target).classes("no-underline w-full"):
-        with ui.row().classes("items-center gap-3 px-3 py-2 cursor-pointer text-white hover:bg-white/5 rounded-r-lg w-full").style(bg):
+        with ui.row().classes(
+            "items-center gap-3 px-3 py-2 cursor-pointer text-white hover:bg-white/5 rounded-r-lg w-full"
+        ).style(bg):
             ui.icon(icon).classes("text-lg")
             ui.label(label).classes("text-sm font-medium")
 
 
 def _add_command_palette():
-    ui.add_body_html('''
+    ui.add_body_html(
+        """
     <style>
     #cmdk-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.5);
@@ -228,9 +274,12 @@ def _add_command_palette():
     })();
     </script>
                      
-    ''')
+    """
+    )
 
-ui.add_head_html("""
+
+ui.add_head_html(
+    """
 <style>
 .q-field__native,
 .q-field__input {
@@ -241,10 +290,13 @@ ui.add_head_html("""
     color: rgba(255,255,255,0.7) !important;
 }
 </style>
-""")
+"""
+)
+
 
 def _add_assistant_widget():
-    ui.add_body_html('''
+    ui.add_body_html(
+        """
     <style>
 #assistant-fab {
         position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
@@ -347,4 +399,5 @@ def _add_assistant_widget():
         input.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(); });
     })();
     </script>
-    ''')
+    """
+    )

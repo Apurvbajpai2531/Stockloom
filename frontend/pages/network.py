@@ -13,9 +13,9 @@ def render_network():
 
     with ui.column().classes("w-full p-4 md:p-6 gap-4 page-container"):
         ui.label("Live Stock Flow Network").classes("text-2xl font-bold page-title")
-        ui.label("Warehouses and transfer activity between them").classes("text-sm").style(
-            "color:var(--ink-soft)"
-        )
+        ui.label("Warehouses and transfer activity between them").classes(
+            "text-sm"
+        ).style("color:var(--ink-soft)")
 
         try:
             data = api.get("/network/flow-graph")
@@ -60,18 +60,21 @@ def _build_network_svg(nodes, edges):
             f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#E8A33D" stroke-width="{width}" opacity="0.35" />'
         )
         dur = max(2, 6 - edge["transfer_count"])
-        particle_svgs.append(f'''
+        particle_svgs.append(
+            f"""
         <circle r="5" fill="#E8A33D">
             <animateMotion dur="{dur}s" repeatCount="indefinite"
                 path="M{x1},{y1} L{x2},{y2}" />
         </circle>
-        ''')
+        """
+        )
 
     node_svgs = []
     for node in nodes:
         x, y = positions[node["id"]]
         size = 28 + (node["total_stock"] / max_stock) * 32
-        node_svgs.append(f'''
+        node_svgs.append(
+            f"""
         <g class="net-node" style="cursor:pointer;">
             <circle cx="{x}" cy="{y}" r="{size}" fill="#1C2230" stroke="#E8A33D" stroke-width="2"
                 class="net-circle" />
@@ -81,9 +84,10 @@ def _build_network_svg(nodes, edges):
                 font-family="JetBrains Mono, monospace">{node["total_stock"]} units</text>
             <title>{node["name"]} — {node["total_stock"]} units in stock</title>
         </g>
-        ''')
+        """
+        )
 
-    svg = f'''
+    svg = f"""
     <div style="width:100%; border-radius:16px; overflow:hidden; position:relative;
         background: radial-gradient(circle at 50% 30%, #232A3D 0%, #14161C 80%);">
         <style>
@@ -103,5 +107,5 @@ def _build_network_svg(nodes, edges):
             {''.join(node_svgs)}
         </svg>
     </div>
-    '''
+    """
     return svg

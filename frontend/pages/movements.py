@@ -23,12 +23,24 @@ def render_movements():
             with ui.row().classes("gap-4 items-end flex-wrap form-row"):
                 item_select = ui.select(item_options, label="Item").classes("w-64")
                 movement_type = ui.select(
-                    {"inbound": "Inbound", "outbound": "Outbound", "transfer": "Transfer", "adjustment": "Adjustment"},
-                    label="Type", value="inbound",
+                    {
+                        "inbound": "Inbound",
+                        "outbound": "Outbound",
+                        "transfer": "Transfer",
+                        "adjustment": "Adjustment",
+                    },
+                    label="Type",
+                    value="inbound",
                 ).classes("w-40")
-                warehouse_select = ui.select(wh_options, label="Warehouse").classes("w-64")
-                dest_select = ui.select(wh_options, label="Destination (transfer only)").classes("w-64")
-                quantity_input = ui.number("Quantity", value=1, format="%.0f").classes("w-32")
+                warehouse_select = ui.select(wh_options, label="Warehouse").classes(
+                    "w-64"
+                )
+                dest_select = ui.select(
+                    wh_options, label="Destination (transfer only)"
+                ).classes("w-64")
+                quantity_input = ui.number("Quantity", value=1, format="%.0f").classes(
+                    "w-32"
+                )
                 reference_input = ui.input("Reference").classes("w-48")
 
             dest_select.bind_visibility_from(movement_type, "value", value="transfer")
@@ -45,7 +57,10 @@ def render_movements():
                     errors.append("Quantity must be greater than 0")
                 if movement_type.value == "transfer" and not dest_select.value:
                     errors.append("Destination warehouse required for transfer")
-                if movement_type.value == "transfer" and dest_select.value == warehouse_select.value:
+                if (
+                    movement_type.value == "transfer"
+                    and dest_select.value == warehouse_select.value
+                ):
                     errors.append("Source and destination must differ")
                 if errors:
                     error_label.text = " | ".join(errors)
@@ -80,11 +95,17 @@ def render_movements():
             {"name": "item_id", "label": "Item ID", "field": "item_id"},
             {"name": "movement_type", "label": "Type", "field": "movement_type"},
             {"name": "warehouse_id", "label": "Warehouse ID", "field": "warehouse_id"},
-            {"name": "destination_warehouse_id", "label": "Dest. Warehouse ID", "field": "destination_warehouse_id"},
+            {
+                "name": "destination_warehouse_id",
+                "label": "Dest. Warehouse ID",
+                "field": "destination_warehouse_id",
+            },
             {"name": "quantity", "label": "Qty", "field": "quantity"},
             {"name": "reference", "label": "Reference", "field": "reference"},
         ]
-        history_table = ui.table(columns=columns, rows=[], row_key="id").classes("w-full")
+        history_table = ui.table(columns=columns, rows=[], row_key="id").classes(
+            "w-full"
+        )
 
         def refresh_history():
             try:

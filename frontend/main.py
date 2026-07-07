@@ -29,10 +29,10 @@ from pages.cycle_count import render_cycle_count
 from pages.cost_analysis import render_cost_analysis
 
 
-
 ui.dark_mode(False)
 
-ui.add_head_html("""
+ui.add_head_html(
+    """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -135,7 +135,8 @@ a, .q-item { transition: background-color 0.15s ease, transform 0.15s ease; }
 .q-field:focus-within .q-field__control { border-color: var(--amber) !important; }
 }
 </style>
-""")
+"""
+)
 
 
 @ui.page("/")
@@ -156,6 +157,7 @@ def dashboard_page():
 @ui.page("/items")
 def items():
     render_items()
+
 
 @ui.page("/items/{item_id}")
 def item_detail_page(item_id: int):
@@ -186,6 +188,7 @@ def purchase_orders_page():
 def reports_page():
     render_reports()
 
+
 @ui.page("/audit-log")
 def audit_log_page():
     render_audit_log()
@@ -195,18 +198,21 @@ def audit_log_page():
 def settings_page():
     render_settings()
 
+
 @ui.page("/reorder-suggestions")
 def reorder_suggestions_page():
-    render_reorder_suggestions()    
+    render_reorder_suggestions()
 
 
 @ui.page("/forecasting")
 def forecasting_page():
     render_forecasting()
 
+
 @ui.page("/rebalancing")
 def rebalancing_page():
     render_rebalancing()
+
 
 @ui.page("/network")
 def network_page():
@@ -217,10 +223,10 @@ def network_page():
 def insights_page():
     render_insights()
 
+
 @ui.page("/analytics")
 def analytics_page():
     render_analytics()
-
 
 
 @ui.page("/command-center")
@@ -266,7 +272,7 @@ def cycle_count_page():
 @ui.page("/cost-analysis")
 def cost_analysis_page():
     render_cost_analysis()
-    
+
 
 ui.run(
     title="StockLoom",
