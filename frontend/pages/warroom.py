@@ -9,7 +9,8 @@ def render_warroom():
     if not require_login():
         return
 
-    ui.add_head_html('''
+    ui.add_head_html(
+        """
     <style>
     body { background: #000 !important; overflow: hidden; }
     .wr-container {
@@ -62,16 +63,19 @@ def render_warroom():
     }
     .wr-exit:hover { background: #C0463C20; }
     </style>
-    ''')
+    """
+    )
 
-    ui.add_body_html('''
+    ui.add_body_html(
+        """
     <script>
     setInterval(() => {
         const el = document.getElementById("wr-clock");
         if (el) el.textContent = new Date().toLocaleTimeString("en-GB");
     }, 1000);
     </script>
-    ''')
+    """
+    )
 
     container = ui.html("")
 
@@ -84,7 +88,9 @@ def render_warroom():
             movements = api.get("/stock-movements", params={"limit": 8})
             alerts = api.get("/alerts/low-stock")
         except Exception as e:
-            container.content = f'<div style="color:red;padding:20px;">Connection error: {e}</div>'
+            container.content = (
+                f'<div style="color:red;padding:20px;">Connection error: {e}</div>'
+            )
             return
 
         wh_totals = {}
@@ -94,14 +100,18 @@ def render_warroom():
 
         max_wh = max(wh_totals.values(), default=1) or 1
         score = pulse["health_score"]
-        score_color = "#00ff88" if score >= 80 else ("#E8A33D" if score >= 50 else "#C0463C")
+        score_color = (
+            "#00ff88" if score >= 80 else ("#E8A33D" if score >= 50 else "#C0463C")
+        )
 
         wh_bars = ""
         for wh in warehouses[:5]:
             qty = wh_totals.get(wh["id"], 0)
             pct = min(qty / max_wh * 100, 100)
-            bar_color = "#00ff88" if pct > 60 else ("#E8A33D" if pct > 30 else "#C0463C")
-            wh_bars += f'''
+            bar_color = (
+                "#00ff88" if pct > 60 else ("#E8A33D" if pct > 30 else "#C0463C")
+            )
+            wh_bars += f"""
             <div style="margin-bottom:6px;">
                 <div style="display:flex;justify-content:space-between;font-size:10px;color:#00ff8880;margin-bottom:2px;">
                     <span>{wh["code"]}</span><span>{qty:,}</span>
@@ -109,7 +119,7 @@ def render_warroom():
                 <div class="wr-bar-track">
                     <div class="wr-bar-fill" style="width:{pct}%;background:{bar_color};"></div>
                 </div>
-            </div>'''
+            </div>"""
 
         feed_lines = ""
         type_colors = {
@@ -122,21 +132,21 @@ def render_warroom():
             mtype = m.get("movement_type", "?")
             color = type_colors.get(mtype, "#fff")
             ts = (m.get("created_at") or "")[:16].replace("T", " ")
-            feed_lines += f'''
+            feed_lines += f"""
             <div class="wr-feed-line">
                 <span style="color:{color};">[{mtype.upper()[:3]}]</span>
                 <span style="color:#00ff8880;"> item#{m.get("item_id")} </span>
                 <span style="color:#00ff88;">+{m.get("quantity")} units</span>
                 <span style="color:#00ff8830;"> {ts}</span>
-            </div>'''
+            </div>"""
 
         alert_lines = ""
         for a in (alerts.get("alerts") or [])[:5]:
             sev_color = "#C0463C" if a.get("severity") == "critical" else "#E8A33D"
-            alert_lines += f'''
+            alert_lines += f"""
             <div style="font-size:10px;padding:3px 0;border-bottom:1px solid #ff000010;color:{sev_color};">
                 {a.get("sku")} - {a.get("current_quantity")} left
-            </div>'''
+            </div>"""
 
         if not alert_lines:
             alert_lines = '<div style="color:#00ff8840;font-size:11px;">All clear</div>'
@@ -145,7 +155,7 @@ def render_warroom():
         offset = circ * (1 - score / 100)
         now_str = datetime.datetime.now().strftime("%H:%M:%S")
 
-        html = f'''
+        html = f"""
         <div class="wr-container">
             <button class="wr-exit" onclick="window.location.href='/dashboard'">EXIT WAR ROOM</button>
 
@@ -222,7 +232,7 @@ def render_warroom():
                 </div>
             </div>
         </div>
-        '''
+        """
         container.content = html
 
     build()

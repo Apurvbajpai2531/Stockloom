@@ -16,9 +16,9 @@ def render_command_center():
         with ui.row().classes("items-center gap-2"):
             ui.icon("radar").classes("text-2xl").style("color:#E8A33D;")
             ui.label("Command Center").classes("text-2xl font-bold page-title")
-        ui.label("Anomaly detection, demand forecast, and warehouse grid — all in one view").classes(
-            "text-sm"
-        ).style("color:var(--ink-soft)")
+        ui.label(
+            "Anomaly detection, demand forecast, and warehouse grid — all in one view"
+        ).classes("text-sm").style("color:var(--ink-soft)")
 
         with ui.row().classes("w-full gap-4 chart-row"):
             # ---- Left: Anomaly Detection ----
@@ -34,22 +34,33 @@ def render_command_center():
                         if data["count"] == 0:
                             with ui.row().classes("items-center gap-2"):
                                 ui.icon("check_circle").style("color:#2F6F6B;")
-                                ui.label("No anomalies detected").style("color:var(--ink-soft)")
+                                ui.label("No anomalies detected").style(
+                                    "color:var(--ink-soft)"
+                                )
                         else:
-                            ui.label(f"{data['count']} anomalies found").classes("text-xs font-semibold").style(
-                                "color:#C0463C;"
-                            )
+                            ui.label(f"{data['count']} anomalies found").classes(
+                                "text-xs font-semibold"
+                            ).style("color:#C0463C;")
                             for a in data["anomalies"][:6]:
                                 with ui.card().classes("p-3 w-full").style(
                                     f"border-left: 3px solid {a['color']};"
                                 ):
                                     with ui.row().classes("items-center gap-2"):
-                                        ui.icon(a["icon"]).classes("text-sm").style(f"color:{a['color']};")
-                                        ui.label(f"{a['sku']} — {a['type']}").classes("text-sm font-semibold")
-                                    ui.label(a["description"]).classes("text-xs").style("color:var(--ink-soft)")
+                                        ui.icon(a["icon"]).classes("text-sm").style(
+                                            f"color:{a['color']};"
+                                        )
+                                        ui.label(f"{a['sku']} — {a['type']}").classes(
+                                            "text-sm font-semibold"
+                                        )
+                                    ui.label(a["description"]).classes("text-xs").style(
+                                        "color:var(--ink-soft)"
+                                    )
                                     ui.button(
-                                        "Inspect", icon="open_in_new",
-                                        on_click=lambda iid=a["item_id"]: ui.navigate.to(f"/items/{iid}")
+                                        "Inspect",
+                                        icon="open_in_new",
+                                        on_click=lambda iid=a[
+                                            "item_id"
+                                        ]: ui.navigate.to(f"/items/{iid}"),
                                     ).props("flat dense").classes("text-xs mt-1")
                 except Exception as e:
                     with anomaly_container:
@@ -100,7 +111,9 @@ def _render_forecast_calendar(cal_data: list):
 
     for month, days in months.items():
         dt = datetime.strptime(month, "%Y-%m")
-        ui.label(dt.strftime("%B %Y")).classes("text-xs font-semibold mb-1").style("color:var(--ink-soft)")
+        ui.label(dt.strftime("%B %Y")).classes("text-xs font-semibold mb-1").style(
+            "color:var(--ink-soft)"
+        )
 
         with ui.row().classes("flex-wrap gap-1 mb-3"):
             for d in days:
@@ -143,10 +156,16 @@ def _render_warehouse_grid(warehouses: list, wh_totals: dict, max_units: int):
             total_cells = rows * cols
             filled_cells = round(fill_pct * total_cells)
 
-            color = "#2F6F6B" if fill_pct > 0.6 else ("#E8A33D" if fill_pct > 0.3 else "#C0463C")
+            color = (
+                "#2F6F6B"
+                if fill_pct > 0.6
+                else ("#E8A33D" if fill_pct > 0.3 else "#C0463C")
+            )
 
             with ui.column().classes("items-center gap-2"):
-                ui.label(f"{wh['code']}").classes("font-bold text-sm mono").style(f"color:{color};")
+                ui.label(f"{wh['code']}").classes("font-bold text-sm mono").style(
+                    f"color:{color};"
+                )
                 ui.label(wh["name"]).classes("text-xs").style("color:var(--ink-soft)")
 
                 html = f'<div style="display:grid; grid-template-columns:repeat({cols}, 16px); gap:3px;">'
@@ -155,17 +174,21 @@ def _render_warehouse_grid(warehouses: list, wh_totals: dict, max_units: int):
                     border = color if i < filled_cells else "#2A2D35"
                     html += (
                         f'<div style="width:16px;height:16px;background:{cell_color};'
-                        f'border:1px solid {border};border-radius:2px;opacity:0.85;'
+                        f"border:1px solid {border};border-radius:2px;opacity:0.85;"
                         f'box-shadow: {f"0 1px 3px {color}40" if i < filled_cells else "none"};">'
-                        f'</div>'
+                        f"</div>"
                     )
-                html += f'</div>'
+                html += "</div>"
                 html += f'<div style="font-size:10px;color:#9A9C9F;font-family:JetBrains Mono,monospace;margin-top:4px;">{total:,} units • {fill_pct*100:.0f}% capacity</div>'
                 ui.html(html)
 
     with ui.row().classes("items-center gap-3 mt-4"):
         ui.label("Capacity:").classes("text-xs").style("color:var(--ink-soft)")
-        for label, color in [("Low (<30%)", "#C0463C"), ("Medium (30-60%)", "#E8A33D"), ("High (>60%)", "#2F6F6B")]:
+        for label, color in [
+            ("Low (<30%)", "#C0463C"),
+            ("Medium (30-60%)", "#E8A33D"),
+            ("High (>60%)", "#2F6F6B"),
+        ]:
             with ui.row().classes("items-center gap-1"):
                 ui.element("div").style(
                     f"width:12px;height:12px;background:{color};border-radius:2px;"

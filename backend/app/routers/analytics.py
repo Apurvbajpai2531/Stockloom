@@ -6,7 +6,6 @@ from sqlalchemy import func
 from app.core.database import get_db
 from app.models.item import Item
 from app.models.stock import StockLevel, StockMovement, MovementType
-from app.models.organization import Warehouse
 from app.models.purchase_order import PurchaseOrder
 
 router = APIRouter()
@@ -27,7 +26,8 @@ def scorecard(db: Session = Depends(get_db)):
                 StockMovement.created_at >= start,
                 StockMovement.created_at < end,
             )
-            .scalar() or 0
+            .scalar()
+            or 0
         )
 
     def movement_qty(start, end, mtype):
@@ -38,7 +38,8 @@ def scorecard(db: Session = Depends(get_db)):
                 StockMovement.created_at >= start,
                 StockMovement.created_at < end,
             )
-            .scalar() or 0
+            .scalar()
+            or 0
         )
 
     inbound_this = int(movement_qty(this_week, now, MovementType.INBOUND))
@@ -51,18 +52,26 @@ def scorecard(db: Session = Depends(get_db)):
     total_value = float(
         db.query(func.coalesce(func.sum(StockLevel.quantity * Item.unit_price), 0))
         .join(Item, Item.id == StockLevel.item_id)
-        .scalar() or 0
+        .scalar()
+        or 0
     )
-    open_pos = db.query(func.count(PurchaseOrder.id)).filter(
-        PurchaseOrder.status.in_(["draft", "ordered"])
-    ).scalar() or 0
+    open_pos = (
+        db.query(func.count(PurchaseOrder.id))
+        .filter(PurchaseOrder.status.in_(["draft", "ordered"]))
+        .scalar()
+        or 0
+    )
 
     totals = dict(
         db.query(StockLevel.item_id, func.coalesce(func.sum(StockLevel.quantity), 0))
         .group_by(StockLevel.item_id)
         .all()
     )
-    low_count = sum(1 for item in db.query(Item).all() if totals.get(item.id, 0) <= item.reorder_threshold)
+    low_count = sum(
+        1
+        for item in db.query(Item).all()
+        if totals.get(item.id, 0) <= item.reorder_threshold
+    )
 
     def trend(current, previous):
         if previous == 0:
@@ -75,12 +84,48 @@ def scorecard(db: Session = Depends(get_db)):
         return "flat"
 
     return [
-        {"label": "Units Inbound (7d)", "value": inbound_this, "trend": trend(inbound_this, inbound_last), "icon": "download", "color": "#2F6F6B"},
-        {"label": "Units Outbound (7d)", "value": outbound_this, "trend": trend(outbound_this, outbound_last), "icon": "upload", "color": "#E8A33D"},
-        {"label": "Transfers (7d)", "value": transfer_this, "trend": trend(transfer_this, transfer_last), "icon": "swap_horiz", "color": "#2563eb"},
-        {"label": "Inventory Value", "value": f"${total_value:,.0f}", "trend": "", "icon": "payments", "color": "#2F6F6B"},
-        {"label": "Open Purchase Orders", "value": open_pos, "trend": "", "icon": "shopping_cart", "color": "#E8A33D"},
-        {"label": "Low Stock Items", "value": low_count, "trend": "", "icon": "warning", "color": "#C0463C"},
+        {
+            "label": "Units Inbound (7d)",
+            "value": inbound_this,
+            "trend": trend(inbound_this, inbound_last),
+            "icon": "download",
+            "color": "#2F6F6B",
+        },
+        {
+            "label": "Units Outbound (7d)",
+            "value": outbound_this,
+            "trend": trend(outbound_this, outbound_last),
+            "icon": "upload",
+            "color": "#E8A33D",
+        },
+        {
+            "label": "Transfers (7d)",
+            "value": transfer_this,
+            "trend": trend(transfer_this, transfer_last),
+            "icon": "swap_horiz",
+            "color": "#2563eb",
+        },
+        {
+            "label": "Inventory Value",
+            "value": f"${total_value:,.0f}",
+            "trend": "",
+            "icon": "payments",
+            "color": "#2F6F6B",
+        },
+        {
+            "label": "Open Purchase Orders",
+            "value": open_pos,
+            "trend": "",
+            "icon": "shopping_cart",
+            "color": "#E8A33D",
+        },
+        {
+            "label": "Low Stock Items",
+            "value": low_count,
+            "trend": "",
+            "icon": "warning",
+            "color": "#C0463C",
+        },
     ]
 
 

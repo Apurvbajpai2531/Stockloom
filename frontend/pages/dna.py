@@ -8,7 +8,8 @@ def render_dna():
     if not require_login():
         return
 
-    ui.add_head_html('''
+    ui.add_head_html(
+        """
     <style>
     body { background: #000 !important; }
     .dna-container {
@@ -60,7 +61,8 @@ def render_dna():
     }
     .dna-cell { animation: dna-glow 3s ease-in-out infinite; }
     </style>
-    ''')
+    """
+    )
 
     container = ui.html("")
 
@@ -73,15 +75,21 @@ def render_dna():
             return
 
         cat_colors = [
-            "#00ff88", "#E8A33D", "#2563eb", "#C0463C",
-            "#a855f7", "#06b6d4", "#ec4899", "#84cc16",
+            "#00ff88",
+            "#E8A33D",
+            "#2563eb",
+            "#C0463C",
+            "#a855f7",
+            "#06b6d4",
+            "#ec4899",
+            "#84cc16",
         ]
         cat_map = {}
         for i, cat in enumerate(categories):
             cat_map[cat["id"]] = cat_colors[i % len(cat_colors)]
 
         max_qty = max((item.get("total_quantity", 0) for item in items), default=1) or 1
-        max_price = max((float(item.get("unit_price", 0)) for item in items), default=1) or 1
+        max((float(item.get("unit_price", 0)) for item in items), default=1) or 1
 
         cells = ""
         for item in items:
@@ -100,28 +108,30 @@ def render_dna():
             hex_b = int(int(base_color[5:7], 16) * brightness)
             bg_color = f"rgb({hex_r},{hex_g},{hex_b})"
 
-            tooltip_text = f"{item['sku']} | {item['name'][:20]} | {qty} units | ${price:.0f}"
+            tooltip_text = (
+                f"{item['sku']} | {item['name'][:20]} | {qty} units | ${price:.0f}"
+            )
             alert_indicator = " !" if is_low else ""
 
-            cells += f'''
+            cells += f"""
             <div class="dna-cell" style="background:{bg_color}; border:1px solid {border_color}40;
                 color:{base_color}; animation-delay:{hash(item["sku"]) % 30 * 0.1}s;">
                 {sku_short}{alert_indicator}
                 <div class="dna-tooltip">{tooltip_text}</div>
-            </div>'''
+            </div>"""
 
         legend_html = ""
         for i, cat in enumerate(categories):
             color = cat_colors[i % len(cat_colors)]
-            legend_html += f'''
+            legend_html += f"""
             <div class="dna-legend-item">
                 <div class="dna-legend-dot" style="background:{color};"></div>
                 {cat["name"]}
-            </div>'''
+            </div>"""
 
         now_str = datetime.datetime.now().strftime("%H:%M:%S")
 
-        html = f'''
+        html = f"""
         <div class="dna-container">
             <button class="dna-exit" onclick="window.location.href='/dashboard'">EXIT DNA VIEW</button>
             <div class="dna-header">
@@ -134,7 +144,7 @@ def render_dna():
             </div>
             <div class="dna-grid">{cells}</div>
         </div>
-        '''
+        """
         container.content = html
 
     build()

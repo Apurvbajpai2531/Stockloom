@@ -24,15 +24,17 @@ def render_settings():
                     ("Esc", "Close command palette"),
                 ]
                 for key, desc in shortcuts:
-                    with ui.row().classes("justify-between w-full py-1").style("border-bottom:1px solid var(--line);"):
+                    with ui.row().classes("justify-between w-full py-1").style(
+                        "border-bottom:1px solid var(--line);"
+                    ):
                         ui.label(desc).style("color:var(--ink-soft)")
                         ui.label(key).classes("mono font-semibold")
 
             with ui.card().classes("p-4 flex-1"):
                 ui.label("User Management").classes("font-semibold mb-2")
-                ui.label("Admins can add or remove team members").classes("text-xs mb-2").style(
-                    "color:var(--ink-soft)"
-                )
+                ui.label("Admins can add or remove team members").classes(
+                    "text-xs mb-2"
+                ).style("color:var(--ink-soft)")
 
                 user_container = ui.column().classes("w-full gap-1")
 
@@ -42,20 +44,28 @@ def render_settings():
                         users = api.get("/users")
                     except Exception as e:
                         with user_container:
-                            ui.label(f"Cannot load users (admin only): {e}").classes("text-xs text-red-600")
+                            ui.label(f"Cannot load users (admin only): {e}").classes(
+                                "text-xs text-red-600"
+                            )
                         return
                     with user_container:
                         for u in users:
-                            with ui.row().classes("items-center justify-between w-full py-1").style(
-                                "border-bottom:1px solid var(--line);"
-                            ):
+                            with ui.row().classes(
+                                "items-center justify-between w-full py-1"
+                            ).style("border-bottom:1px solid var(--line);"):
                                 with ui.row().classes("items-center gap-2"):
                                     ui.icon("person").classes("text-sm")
                                     ui.label(u["username"]).classes("text-sm")
-                                    ui.badge(u["role"], color="orange" if u["role"] == "admin" else "grey")
+                                    ui.badge(
+                                        u["role"],
+                                        color=(
+                                            "orange" if u["role"] == "admin" else "grey"
+                                        ),
+                                    )
                                 if u["username"] != "admin":
                                     ui.button(
-                                        icon="delete", on_click=lambda uid=u["id"]: delete_user(uid)
+                                        icon="delete",
+                                        on_click=lambda uid=u["id"]: delete_user(uid),
                                     ).props("dense flat color=red")
 
                 def delete_user(user_id: int):
@@ -66,14 +76,22 @@ def render_settings():
                     except Exception as e:
                         ui.notify(f"Failed: {e}", type="negative")
 
-                ui.button("+ Add User", icon="person_add", on_click=lambda: open_add_user_dialog()).classes("mt-2")
+                ui.button(
+                    "+ Add User",
+                    icon="person_add",
+                    on_click=lambda: open_add_user_dialog(),
+                ).classes("mt-2")
 
                 def open_add_user_dialog():
                     with ui.dialog() as dialog, ui.card().classes("w-80"):
                         ui.label("Add Team Member").classes("font-bold")
                         username = ui.input("Username").classes("w-full")
                         password = ui.input("Password", password=True).classes("w-full")
-                        role = ui.select({"staff": "Staff", "admin": "Admin"}, value="staff", label="Role").classes("w-full")
+                        role = ui.select(
+                            {"staff": "Staff", "admin": "Admin"},
+                            value="staff",
+                            label="Role",
+                        ).classes("w-full")
                         error_label = ui.label("").classes("text-red-600 text-xs")
 
                         def save():
@@ -81,11 +99,14 @@ def render_settings():
                                 error_label.text = "Username and password required"
                                 return
                             try:
-                                api.post("/users", {
-                                    "username": username.value.strip(),
-                                    "password": password.value,
-                                    "role": role.value,
-                                })
+                                api.post(
+                                    "/users",
+                                    {
+                                        "username": username.value.strip(),
+                                        "password": password.value,
+                                        "role": role.value,
+                                    },
+                                )
                                 ui.notify("User created", type="positive")
                                 dialog.close()
                                 refresh_users()

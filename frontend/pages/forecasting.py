@@ -4,7 +4,12 @@ from api_client import api
 from components import render_header
 from auth_guard import require_login
 
-RISK_COLORS = {"critical": "red", "warning": "orange", "healthy": "teal", "no_movement": "grey"}
+RISK_COLORS = {
+    "critical": "red",
+    "warning": "orange",
+    "healthy": "teal",
+    "no_movement": "grey",
+}
 RISK_LABELS = {
     "critical": "CRITICAL — Reorder Now",
     "warning": "WARNING — Order Soon",
@@ -21,9 +26,9 @@ def render_forecasting():
 
     with ui.column().classes("w-full p-4 md:p-6 gap-4 page-container"):
         ui.label("Stockout Forecasting").classes("text-2xl font-bold page-title")
-        ui.label("Based on outbound velocity over the last 30 days").classes("text-sm").style(
-            "color:var(--ink-soft)"
-        )
+        ui.label("Based on outbound velocity over the last 30 days").classes(
+            "text-sm"
+        ).style("color:var(--ink-soft)")
 
         summary_row = ui.row().classes("w-full gap-4 stats-row")
         table_container = ui.column().classes("w-full mt-4")
@@ -51,15 +56,29 @@ def render_forecasting():
                 columns = [
                     {"name": "sku", "label": "SKU", "field": "sku"},
                     {"name": "name", "label": "Name", "field": "name"},
-                    {"name": "current_quantity", "label": "Current Qty", "field": "current_quantity"},
-                    {"name": "daily_velocity", "label": "Daily Usage", "field": "daily_velocity"},
-                    {"name": "days_until_stockout", "label": "Days Until Stockout", "field": "days_until_stockout"},
+                    {
+                        "name": "current_quantity",
+                        "label": "Current Qty",
+                        "field": "current_quantity",
+                    },
+                    {
+                        "name": "daily_velocity",
+                        "label": "Daily Usage",
+                        "field": "daily_velocity",
+                    },
+                    {
+                        "name": "days_until_stockout",
+                        "label": "Days Until Stockout",
+                        "field": "days_until_stockout",
+                    },
                     {"name": "risk", "label": "Risk", "field": "risk"},
                 ]
-                t = ui.table(columns=columns, rows=data, row_key="item_id").classes("w-full")
+                t = ui.table(columns=columns, rows=data, row_key="item_id").classes(
+                    "w-full"
+                )
                 t.add_slot(
                     "body-cell-risk",
-                    '''
+                    """
                     <q-td :props="props">
                         <q-badge :color="
                             props.value === 'critical' ? 'red' :
@@ -67,9 +86,12 @@ def render_forecasting():
                             props.value === 'healthy' ? 'teal' : 'grey'
                         " :label="props.value.toUpperCase()" />
                     </q-td>
-                    ''',
+                    """,
                 )
-                t.on("row-click", lambda e: ui.navigate.to(f"/items/{e.args[1]['item_id']}"))
+                t.on(
+                    "row-click",
+                    lambda e: ui.navigate.to(f"/items/{e.args[1]['item_id']}"),
+                )
 
         ui.button("Refresh", icon="refresh", on_click=refresh).classes("self-end")
         refresh()

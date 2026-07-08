@@ -25,7 +25,9 @@ def detect_anomalies(db: Session = Depends(get_db)):
     for item in db.query(Item).all():
         movements = (
             db.query(StockMovement)
-            .filter(StockMovement.item_id == item.id, StockMovement.created_at >= cutoff)
+            .filter(
+                StockMovement.item_id == item.id, StockMovement.created_at >= cutoff
+            )
             .order_by(StockMovement.created_at.desc())
             .all()
         )
@@ -44,53 +46,72 @@ def detect_anomalies(db: Session = Depends(get_db)):
             z_score = abs(m.quantity - avg_qty) / (std_dev or 1)
 
             if z_score > 3:
-                anomalies.append({
-                    "severity": "high",
-                    "icon": "bolt",
-                    "color": "#C0463C",
+                anomalies.append(
+                    {
+                        "severity": "high",
+                        "icon": "bolt",
+                        "color": "#C0463C",
+                        "item_id": item.id,
+                        "sku": item.sku,
+                        "name": item.name,
+                        "type": "Statistical Spike",
+                        "description": f"Movement of {m.quantity} units is {z_score:.1f}x standard deviation above normal (avg: {avg_qty:.0f})",
+                        "date": m.created_at.isoformat() if m.created_at else None,
+                    }
+                )
+                break
+
+        adjustments = [
+            m for m in movements if m.movement_type == MovementType.ADJUSTMENT
+        ]
+        if len(adjustments) >= 3:
+            anomalies.append(
+                {
+                    "severity": "medium",
+                    "icon": "edit_note",
+                    "color": "#E8A33D",
                     "item_id": item.id,
                     "sku": item.sku,
                     "name": item.name,
-                    "type": "Statistical Spike",
-                    "description": f"Movement of {m.quantity} units is {z_score:.1f}x standard deviation above normal (avg: {avg_qty:.0f})",
-                    "date": m.created_at.isoformat() if m.created_at else None,
-                })
-                break
+                    "type": "Frequent Adjustments",
+                    "description": f"{len(adjustments)} manual adjustments in 30 days — unusual for normal operations",
+                    "date": (
+                        adjustments[0].created_at.isoformat()
+                        if adjustments[0].created_at
+                        else None
+                    ),
+                }
+            )
 
-        adjustments = [m for m in movements if m.movement_type == MovementType.ADJUSTMENT]
-        if len(adjustments) >= 3:
-            anomalies.append({
-                "severity": "medium",
-                "icon": "edit_note",
-                "color": "#E8A33D",
-                "item_id": item.id,
-                "sku": item.sku,
-                "name": item.name,
-                "type": "Frequent Adjustments",
-                "description": f"{len(adjustments)} manual adjustments in 30 days — unusual for normal operations",
-                "date": adjustments[0].created_at.isoformat() if adjustments[0].created_at else None,
-            })
-
-        outbound_movements = [m for m in movements if m.movement_type == MovementType.OUTBOUND]
+        outbound_movements = [
+            m for m in movements if m.movement_type == MovementType.OUTBOUND
+        ]
         if outbound_movements:
             largest = max(outbound_movements, key=lambda x: x.quantity)
             total_stock = (
                 db.query(func.coalesce(func.sum(StockLevel.quantity), 0))
                 .filter(StockLevel.item_id == item.id)
-                .scalar() or 0
+                .scalar()
+                or 0
             )
             if total_stock > 0 and largest.quantity > total_stock * 0.6:
-                anomalies.append({
-                    "severity": "medium",
-                    "icon": "moving",
-                    "color": "#E8A33D",
-                    "item_id": item.id,
-                    "sku": item.sku,
-                    "name": item.name,
-                    "type": "Large Single Outbound",
-                    "description": f"Single outbound of {largest.quantity} units = {(largest.quantity/total_stock*100):.0f}% of current stock",
-                    "date": largest.created_at.isoformat() if largest.created_at else None,
-                })
+                anomalies.append(
+                    {
+                        "severity": "medium",
+                        "icon": "moving",
+                        "color": "#E8A33D",
+                        "item_id": item.id,
+                        "sku": item.sku,
+                        "name": item.name,
+                        "type": "Large Single Outbound",
+                        "description": f"Single outbound of {largest.quantity} units = {(largest.quantity/total_stock*100):.0f}% of current stock",
+                        "date": (
+                            largest.created_at.isoformat()
+                            if largest.created_at
+                            else None
+                        ),
+                    }
+                )
 
     anomalies.sort(key=lambda x: (0 if x["severity"] == "high" else 1, x["sku"]))
     return {"count": len(anomalies), "anomalies": anomalies[:20]}
@@ -102,12 +123,16 @@ def demand_forecast_calendar(db: Session = Depends(get_db)):
     Predicts demand for next 30 days per item using 30-day velocity.
     Returns calendar-ready data: {date, predicted_units, items_at_risk}.
     """
-    from datetime import date as date_type
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)
     outbound_by_item = dict(
-        db.query(StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0))
-        .filter(StockMovement.movement_type == MovementType.OUTBOUND, StockMovement.created_at >= cutoff)
+        db.query(
+            StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0)
+        )
+        .filter(
+            StockMovement.movement_type == MovementType.OUTBOUND,
+            StockMovement.created_at >= cutoff,
+        )
         .group_by(StockMovement.item_id)
         .all()
     )
@@ -125,7 +150,9 @@ def demand_forecast_calendar(db: Session = Depends(get_db)):
 
     calendar_data = []
     for day_offset in range(1, 31):
-        forecast_date = (datetime.now() + timedelta(days=day_offset)).strftime("%Y-%m-%d")
+        forecast_date = (datetime.now() + timedelta(days=day_offset)).strftime(
+            "%Y-%m-%d"
+        )
         total_predicted = 0
         items_at_risk = []
         for item, daily_v in velocities.items():
@@ -135,11 +162,13 @@ def demand_forecast_calendar(db: Session = Depends(get_db)):
             if predicted >= current:
                 items_at_risk.append(item.sku)
 
-        calendar_data.append({
-            "date": forecast_date,
-            "predicted_units": total_predicted,
-            "items_at_risk": items_at_risk[:3],
-            "risk_count": len(items_at_risk),
-        })
+        calendar_data.append(
+            {
+                "date": forecast_date,
+                "predicted_units": total_predicted,
+                "items_at_risk": items_at_risk[:3],
+                "risk_count": len(items_at_risk),
+            }
+        )
 
     return calendar_data

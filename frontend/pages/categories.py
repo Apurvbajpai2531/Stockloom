@@ -20,21 +20,29 @@ def render_categories():
             with ui.card().classes("flex-1 p-4"):
                 with ui.row().classes("w-full items-center justify-between"):
                     ui.label("Categories").classes("text-lg font-semibold")
-                    ui.button("Add", icon="add", on_click=lambda: open_category_dialog())
+                    ui.button(
+                        "Add", icon="add", on_click=lambda: open_category_dialog()
+                    )
 
                 cat_columns = [
                     {"name": "name", "label": "Name", "field": "name"},
-                    {"name": "description", "label": "Description", "field": "description"},
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "field": "description",
+                    },
                     {"name": "actions", "label": "Actions", "field": "actions"},
                 ]
-                cat_table = ui.table(columns=cat_columns, rows=[], row_key="id").classes("w-full")
+                cat_table = ui.table(
+                    columns=cat_columns, rows=[], row_key="id"
+                ).classes("w-full")
                 cat_table.add_slot(
                     "body-cell-actions",
-                    '''
+                    """
                     <q-td :props="props">
                         <q-btn dense flat icon="delete" color="red" @click="() => $parent.$emit('delete-cat', props.row)" />
                     </q-td>
-                    ''',
+                    """,
                 )
 
                 def refresh_categories():
@@ -56,7 +64,13 @@ def render_categories():
                                 error_label.text = "Name is required"
                                 return
                             try:
-                                api.post("/categories", {"name": name.value.strip(), "description": description.value})
+                                api.post(
+                                    "/categories",
+                                    {
+                                        "name": name.value.strip(),
+                                        "description": description.value,
+                                    },
+                                )
                                 ui.notify("Saved", type="positive")
                                 dialog.close()
                                 refresh_categories()
@@ -84,22 +98,34 @@ def render_categories():
             with ui.card().classes("flex-1 p-4"):
                 with ui.row().classes("w-full items-center justify-between"):
                     ui.label("Suppliers").classes("text-lg font-semibold")
-                    ui.button("Add", icon="add", on_click=lambda: open_supplier_dialog())
+                    ui.button(
+                        "Add", icon="add", on_click=lambda: open_supplier_dialog()
+                    )
 
                 sup_columns = [
                     {"name": "name", "label": "Name", "field": "name"},
-                    {"name": "contact_email", "label": "Email", "field": "contact_email"},
-                    {"name": "contact_phone", "label": "Phone", "field": "contact_phone"},
+                    {
+                        "name": "contact_email",
+                        "label": "Email",
+                        "field": "contact_email",
+                    },
+                    {
+                        "name": "contact_phone",
+                        "label": "Phone",
+                        "field": "contact_phone",
+                    },
                     {"name": "actions", "label": "Actions", "field": "actions"},
                 ]
-                sup_table = ui.table(columns=sup_columns, rows=[], row_key="id").classes("w-full")
+                sup_table = ui.table(
+                    columns=sup_columns, rows=[], row_key="id"
+                ).classes("w-full")
                 sup_table.add_slot(
                     "body-cell-actions",
-                    '''
+                    """
                     <q-td :props="props">
                         <q-btn dense flat icon="delete" color="red" @click="() => $parent.$emit('delete-sup', props.row)" />
                     </q-td>
-                    ''',
+                    """,
                 )
 
                 def refresh_suppliers():
@@ -123,12 +149,15 @@ def render_categories():
                                 error_label.text = "Name is required"
                                 return
                             try:
-                                api.post("/suppliers", {
-                                    "name": name.value.strip(),
-                                    "contact_email": email.value,
-                                    "contact_phone": phone.value,
-                                    "address": address.value,
-                                })
+                                api.post(
+                                    "/suppliers",
+                                    {
+                                        "name": name.value.strip(),
+                                        "contact_email": email.value,
+                                        "contact_phone": phone.value,
+                                        "address": address.value,
+                                    },
+                                )
                                 ui.notify("Saved", type="positive")
                                 dialog.close()
                                 refresh_suppliers()
@@ -150,4 +179,4 @@ def render_categories():
                         ui.notify(f"Delete failed: {ex}", type="negative")
 
                 sup_table.on("delete-sup", handle_delete_sup)
-                refresh_suppliers()#
+                refresh_suppliers()  #

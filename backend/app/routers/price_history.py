@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.auth import get_current_user
 from app.models.price_history import PriceHistory
 from app.models.item import Item
 

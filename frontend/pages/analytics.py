@@ -1,4 +1,3 @@
-import json
 from nicegui import ui
 
 from api_client import api
@@ -26,26 +25,48 @@ def render_analytics():
             with scorecard_row:
                 for card in cards:
                     trend = card.get("trend", "")
-                    trend_color = "#2F6F6B" if "+" in str(trend) else ("#C0463C" if "-" in str(trend) else "#9A9C9F")
-                    trend_icon = "trending_up" if "+" in str(trend) else ("trending_down" if "-" in str(trend) else "trending_flat")
+                    trend_color = (
+                        "#2F6F6B"
+                        if "+" in str(trend)
+                        else ("#C0463C" if "-" in str(trend) else "#9A9C9F")
+                    )
+                    trend_icon = (
+                        "trending_up"
+                        if "+" in str(trend)
+                        else ("trending_down" if "-" in str(trend) else "trending_flat")
+                    )
 
-                    with ui.card().classes("p-4 w-48").style(f"border-top: 3px solid {card['color']};"):
+                    with ui.card().classes("p-4 w-48").style(
+                        f"border-top: 3px solid {card['color']};"
+                    ):
                         with ui.row().classes("items-center gap-2 mb-1"):
-                            ui.icon(card["icon"]).classes("text-lg").style(f"color:{card['color']};")
-                            ui.label(card["label"]).classes("text-xs").style("color:var(--ink-soft)")
+                            ui.icon(card["icon"]).classes("text-lg").style(
+                                f"color:{card['color']};"
+                            )
+                            ui.label(card["label"]).classes("text-xs").style(
+                                "color:var(--ink-soft)"
+                            )
                         ui.label(str(card["value"])).classes("text-2xl font-bold mono")
                         if trend and trend != "flat":
                             with ui.row().classes("items-center gap-1 mt-1"):
-                                ui.icon(trend_icon).classes("text-sm").style(f"color:{trend_color};")
-                                ui.label(str(trend)).classes("text-xs mono").style(f"color:{trend_color};")
+                                ui.icon(trend_icon).classes("text-sm").style(
+                                    f"color:{trend_color};"
+                                )
+                                ui.label(str(trend)).classes("text-xs mono").style(
+                                    f"color:{trend_color};"
+                                )
                         elif trend == "flat":
-                            ui.label("same as last week").classes("text-xs").style("color:#9A9C9F;")
+                            ui.label("same as last week").classes("text-xs").style(
+                                "color:#9A9C9F;"
+                            )
         except Exception as e:
             ui.label(f"Could not load scorecard: {e}").classes("text-red-600")
 
         # ---- Activity Heatmap ----
         ui.label("Stock Activity — Last 12 Weeks").classes("font-semibold text-lg mt-4")
-        ui.label("Each cell = 1 day. Darker = more movement.").classes("text-xs mb-2").style("color:var(--ink-soft)")
+        ui.label("Each cell = 1 day. Darker = more movement.").classes(
+            "text-xs mb-2"
+        ).style("color:var(--ink-soft)")
 
         try:
             heatmap_data = api.get("/analytics/activity-heatmap")
@@ -63,17 +84,24 @@ def render_analytics():
                 type_counts[t] = type_counts.get(t, 0) + 1
 
             if type_counts:
-                ui.echart({
-                    "tooltip": {"trigger": "item"},
-                    "series": [{
-                        "type": "pie",
-                        "radius": ["40%", "70%"],
-                        "data": [{"name": k, "value": v} for k, v in type_counts.items()],
-                        "itemStyle": {"borderRadius": 6},
-                        "label": {"show": True, "formatter": "{b}: {c}"},
-                    }],
-                    "color": ["#2F6F6B", "#E8A33D", "#2563eb", "#C0463C"],
-                }).classes("w-full h-64")
+                ui.echart(
+                    {
+                        "tooltip": {"trigger": "item"},
+                        "series": [
+                            {
+                                "type": "pie",
+                                "radius": ["40%", "70%"],
+                                "data": [
+                                    {"name": k, "value": v}
+                                    for k, v in type_counts.items()
+                                ],
+                                "itemStyle": {"borderRadius": 6},
+                                "label": {"show": True, "formatter": "{b}: {c}"},
+                            }
+                        ],
+                        "color": ["#2F6F6B", "#E8A33D", "#2563eb", "#C0463C"],
+                    }
+                ).classes("w-full h-64")
         except Exception:
             pass
 
@@ -124,7 +152,7 @@ def _render_heatmap(data: list):
         cells.append(
             f'<rect x="{x}" y="{y}" width="{cell_size}" height="{cell_size}" '
             f'rx="2" fill="{color}" opacity="0.9">'
-            f'<title>{date_str}: {count} movements</title></rect>'
+            f"<title>{date_str}: {count} movements</title></rect>"
         )
 
     day_label_svgs = "".join(
@@ -133,7 +161,7 @@ def _render_heatmap(data: list):
         for i, label in enumerate(day_labels)
     )
 
-    svg = f'''
+    svg = f"""
     <div style="overflow-x:auto; width:100%;">
     <svg width="{svg_width}" height="{svg_height}" style="display:block;">
         {day_label_svgs}
@@ -152,5 +180,5 @@ def _render_heatmap(data: list):
         More
     </div>
     </div>
-    '''
+    """
     ui.html(svg)

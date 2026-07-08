@@ -7,7 +7,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
 from app.models.user import User
 
 SECRET_KEY = os.getenv("SECRET_KEY", "change-this-secret-key")
@@ -28,7 +27,9 @@ def verify_password(plain_password: str, hashed: str) -> bool:
 
 def create_access_token(username: str, role: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    return jwt.encode({"sub": username, "role": role, "exp": expire}, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(
+        {"sub": username, "role": role, "exp": expire}, SECRET_KEY, algorithm=ALGORITHM
+    )
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
@@ -61,5 +62,11 @@ def ensure_default_admin(db: Session):
     if db.query(User).count() == 0:
         default_user = os.getenv("ADMIN_USERNAME", "admin")
         default_pass = os.getenv("ADMIN_PASSWORD", "stockloom123")
-        db.add(User(username=default_user, password_hash=hash_password(default_pass), role="admin"))
+        db.add(
+            User(
+                username=default_user,
+                password_hash=hash_password(default_pass),
+                role="admin",
+            )
+        )
         db.commit()

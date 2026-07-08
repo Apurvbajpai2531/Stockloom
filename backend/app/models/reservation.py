@@ -13,7 +13,9 @@ class StockReservation(Base):
     quantity = Column(Integer, nullable=False)
     reference = Column(String(120), nullable=False)
     reason = Column(Text, nullable=True)
-    status = Column(String(20), nullable=False, default="active")  # active, fulfilled, cancelled
+    status = Column(
+        String(20), nullable=False, default="active"
+    )  # active, fulfilled, cancelled
     created_by = Column(String(80), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)

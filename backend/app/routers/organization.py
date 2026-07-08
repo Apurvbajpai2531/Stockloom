@@ -5,9 +5,13 @@ from sqlalchemy.exc import IntegrityError
 from app.core.database import get_db
 from app.models.organization import Warehouse, Category, Supplier
 from app.schemas.organization import (
-    WarehouseCreate, WarehouseUpdate, WarehouseOut,
-    CategoryCreate, CategoryOut,
-    SupplierCreate, SupplierOut,
+    WarehouseCreate,
+    WarehouseUpdate,
+    WarehouseOut,
+    CategoryCreate,
+    CategoryOut,
+    SupplierCreate,
+    SupplierOut,
 )
 
 router = APIRouter()
@@ -27,13 +31,17 @@ def create_warehouse(payload: WarehouseCreate, db: Session = Depends(get_db)):
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=409, detail="Warehouse name or code already exists")
+        raise HTTPException(
+            status_code=409, detail="Warehouse name or code already exists"
+        )
     db.refresh(wh)
     return wh
 
 
 @router.put("/warehouses/{warehouse_id}", response_model=WarehouseOut)
-def update_warehouse(warehouse_id: int, payload: WarehouseUpdate, db: Session = Depends(get_db)):
+def update_warehouse(
+    warehouse_id: int, payload: WarehouseUpdate, db: Session = Depends(get_db)
+):
     wh = db.query(Warehouse).get(warehouse_id)
     if not wh:
         raise HTTPException(status_code=404, detail="Warehouse not found")

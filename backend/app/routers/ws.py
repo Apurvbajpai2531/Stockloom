@@ -19,6 +19,7 @@ async def stock_updates_ws(websocket: WebSocket):
 async def broadcast_stock_update(message: dict):
     """Call this after any stock-changing operation to push live updates to all connected clients."""
     import json
+
     dead = []
     for conn in active_connections:
         try:

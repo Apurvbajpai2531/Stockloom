@@ -21,13 +21,15 @@ def low_stock_alerts(db: Session = Depends(get_db)):
         qty = totals.get(item.id, 0)
         if qty <= item.reorder_threshold:
             severity = "critical" if qty == 0 else "warning"
-            alerts.append({
-                "item_id": item.id,
-                "sku": item.sku,
-                "name": item.name,
-                "current_quantity": qty,
-                "reorder_threshold": item.reorder_threshold,
-                "severity": severity,
-            })
+            alerts.append(
+                {
+                    "item_id": item.id,
+                    "sku": item.sku,
+                    "name": item.name,
+                    "current_quantity": qty,
+                    "reorder_threshold": item.reorder_threshold,
+                    "severity": severity,
+                }
+            )
     alerts.sort(key=lambda a: a["current_quantity"])
     return {"count": len(alerts), "alerts": alerts}

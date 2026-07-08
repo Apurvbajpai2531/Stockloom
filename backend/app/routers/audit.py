@@ -12,15 +12,15 @@ def list_audit_logs(limit: int = 100, db: Session = Depends(get_db)):
     logs = db.query(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit).all()
     return [
         {
-            "id": l.id,
-            "action": l.action,
-            "entity_type": l.entity_type,
-            "entity_id": l.entity_id,
-            "username": l.username,
-            "details": l.details,
-            "created_at": l.created_at.isoformat() if l.created_at else None,
+            "id": log.id,
+            "action": log.action,
+            "entity_type": log.entity_type,
+            "entity_id": log.entity_id,
+            "username": log.username,
+            "details": log.details,
+            "created_at": log.created_at.isoformat() if log.created_at else None,
         }
-        for l in logs
+        for log in logs
     ]
 
 
@@ -29,9 +29,13 @@ def recent_activity_summary(limit: int = 10, db: Session = Depends(get_db)):
     logs = db.query(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit).all()
     return [
         {
-            "icon": "add_circle" if "create" in l.action else ("delete" if "delete" in l.action else "edit"),
-            "text": f"{l.username or 'system'} — {l.action.replace('_', ' ')} ({l.details or ''})",
-            "time": l.created_at.isoformat() if l.created_at else None,
+            "icon": (
+                "add_circle"
+                if "create" in log.action
+                else ("delete" if "delete" in log.action else "edit")
+            ),
+            "text": f"{log.username or 'system'} — {log.action.replace('_', ' ')} ({log.details or ''})",
+            "time": log.created_at.isoformat() if log.created_at else None,
         }
-        for l in logs
+        for log in logs
     ]

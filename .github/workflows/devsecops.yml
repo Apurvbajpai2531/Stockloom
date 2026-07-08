@@ -1,0 +1,64 @@
+name: StockLoom DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+  pull_request:
+    branches:
+      - main
+      - dev
+
+
+jobs:
+
+  # ---------------- CI ----------------
+
+  code-quality:
+    name: Code Quality Check
+    uses: ./.github/workflows/code-quality.yml
+
+
+  code-tests:
+    name: Application Tests
+    uses: ./.github/workflows/code-test.yml
+
+
+  secret-scanning:
+    name: Secret Scanning
+    uses: ./.github/workflows/secret-scanning.yml
+
+
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    uses: ./.github/workflows/dependency-scan.yml
+
+
+  docker-scans:
+    name: Docker Security Scan
+    uses: ./.github/workflows/docker-scans.yml
+    secrets: inherit
+
+
+  semgrep-scan:
+    name: Semgrep Security Scan
+    uses: ./.github/workflows/semgrep-scan.yml
+
+
+  # ---------------- CD ----------------
+
+  docker-push:
+    name: Push Images To DockerHub
+
+    needs:
+      - code-quality
+      - code-tests
+      - secret-scanning
+      - dependency-scan
+      - docker-scans
+      - semgrep-scan
+
+    uses: ./.github/workflows/docker-push.yml
+    secrets: inherit

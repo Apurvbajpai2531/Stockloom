@@ -15,7 +15,9 @@ def render_reservations():
         with ui.row().classes("items-center gap-2"):
             ui.icon("bookmark").classes("text-2xl").style("color:#E8A33D;")
             ui.label("Stock Reservations").classes("text-2xl font-bold page-title")
-        ui.label("Reserve stock for upcoming orders before they are fulfilled").classes("text-sm").style("color:var(--ink-soft)")
+        ui.label("Reserve stock for upcoming orders before they are fulfilled").classes(
+            "text-sm"
+        ).style("color:var(--ink-soft)")
 
         with ui.row().classes("w-full gap-6 chart-row"):
             # ---- Create Reservation ----
@@ -24,13 +26,17 @@ def render_reservations():
 
                 items_list = api.get("/items", params={"limit": 200})
                 warehouses_list = api.get("/warehouses")
-                item_options = {i["id"]: f"{i['sku']} — {i['name']}" for i in items_list}
+                item_options = {
+                    i["id"]: f"{i['sku']} — {i['name']}" for i in items_list
+                }
                 wh_options = {w["id"]: w["name"] for w in warehouses_list}
 
                 item_sel = ui.select(item_options, label="Item").classes("w-full")
                 wh_sel = ui.select(wh_options, label="Warehouse").classes("w-full")
                 qty_input = ui.number("Quantity to Reserve", value=1).classes("w-full")
-                ref_input = ui.input("Reference (Order #, Customer, etc.)").classes("w-full")
+                ref_input = ui.input("Reference (Order #, Customer, etc.)").classes(
+                    "w-full"
+                )
                 reason_input = ui.textarea("Reason (optional)").classes("w-full")
 
                 avail_label = ui.label("").classes("text-sm mono")
@@ -38,13 +44,19 @@ def render_reservations():
                 def check_avail():
                     if item_sel.value and wh_sel.value:
                         try:
-                            avail = api.get(f"/reservations/availability/{item_sel.value}/{wh_sel.value}")
+                            avail = api.get(
+                                f"/reservations/availability/{item_sel.value}/{wh_sel.value}"
+                            )
                             avail_label.text = (
                                 f"Total: {avail['total_quantity']} | "
                                 f"Reserved: {avail['reserved_quantity']} | "
                                 f"Available: {avail['available_quantity']}"
                             )
-                            avail_label.style("color:#2F6F6B;" if avail["available_quantity"] > 0 else "color:#C0463C;")
+                            avail_label.style(
+                                "color:#2F6F6B;"
+                                if avail["available_quantity"] > 0
+                                else "color:#C0463C;"
+                            )
                         except Exception:
                             pass
 
@@ -58,14 +70,20 @@ def render_reservations():
                         error_label.text = "Item, warehouse and reference are required"
                         return
                     try:
-                        result = api.post("/reservations", {
-                            "item_id": item_sel.value,
-                            "warehouse_id": wh_sel.value,
-                            "quantity": int(qty_input.value),
-                            "reference": ref_input.value.strip(),
-                            "reason": reason_input.value or None,
-                        })
-                        ui.notify(f"Reserved — available after: {result['available_after']}", type="positive")
+                        result = api.post(
+                            "/reservations",
+                            {
+                                "item_id": item_sel.value,
+                                "warehouse_id": wh_sel.value,
+                                "quantity": int(qty_input.value),
+                                "reference": ref_input.value.strip(),
+                                "reason": reason_input.value or None,
+                            },
+                        )
+                        ui.notify(
+                            f"Reserved — available after: {result['available_after']}",
+                            type="positive",
+                        )
                         error_label.text = ""
                         ref_input.value = ""
                         reason_input.value = ""
@@ -74,7 +92,9 @@ def render_reservations():
                     except Exception as e:
                         ui.notify(f"Failed: {e}", type="negative")
 
-                ui.button("Reserve Stock", icon="bookmark_add", on_click=create).classes("w-full mt-2").style("background:var(--ink); color:white;")
+                ui.button(
+                    "Reserve Stock", icon="bookmark_add", on_click=create
+                ).classes("w-full mt-2").style("background:var(--ink); color:white;")
 
             # ---- Active Reservations ----
             with ui.card().classes("flex-1 p-4"):
@@ -91,23 +111,41 @@ def render_reservations():
                         return
                     if not rows:
                         with res_container:
-                            ui.label("No active reservations").style("color:var(--ink-soft)")
+                            ui.label("No active reservations").style(
+                                "color:var(--ink-soft)"
+                            )
                         return
                     with res_container:
                         for r in rows:
                             with ui.card().classes("p-3 w-full"):
                                 with ui.row().classes("justify-between items-center"):
                                     with ui.column():
-                                        ui.label(f"{r['sku']} — {r['item_name']}").classes("font-semibold text-sm")
-                                        ui.label(f"Ref: {r['reference']} | {r['quantity']} units @ {r['warehouse_name']}").classes("text-xs").style("color:var(--ink-soft)")
+                                        ui.label(
+                                            f"{r['sku']} — {r['item_name']}"
+                                        ).classes("font-semibold text-sm")
+                                        ui.label(
+                                            f"Ref: {r['reference']} | {r['quantity']} units @ {r['warehouse_name']}"
+                                        ).classes("text-xs").style(
+                                            "color:var(--ink-soft)"
+                                        )
                                     with ui.row().classes("gap-1"):
-                                        ui.button("Fulfil", icon="check", on_click=lambda rid=r["id"]: fulfil(rid)).props("flat dense color=teal")
-                                        ui.button("Cancel", icon="close", on_click=lambda rid=r["id"]: cancel(rid)).props("flat dense color=red")
+                                        ui.button(
+                                            "Fulfil",
+                                            icon="check",
+                                            on_click=lambda rid=r["id"]: fulfil(rid),
+                                        ).props("flat dense color=teal")
+                                        ui.button(
+                                            "Cancel",
+                                            icon="close",
+                                            on_click=lambda rid=r["id"]: cancel(rid),
+                                        ).props("flat dense color=red")
 
                 def fulfil(res_id: int):
                     try:
                         api.post(f"/reservations/{res_id}/fulfil", {})
-                        ui.notify("Reservation fulfilled — stock deducted", type="positive")
+                        ui.notify(
+                            "Reservation fulfilled — stock deducted", type="positive"
+                        )
                         refresh_list()
                     except Exception as e:
                         ui.notify(f"Failed: {e}", type="negative")

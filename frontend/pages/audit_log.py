@@ -13,9 +13,9 @@ def render_audit_log():
 
     with ui.column().classes("w-full p-4 md:p-6 gap-4 page-container"):
         ui.label("Audit Log").classes("text-2xl font-bold page-title")
-        ui.label("Recent create/delete actions across the system").classes("text-sm").style(
-            "color:var(--ink-soft)"
-        )
+        ui.label("Recent create/delete actions across the system").classes(
+            "text-sm"
+        ).style("color:var(--ink-soft)")
 
         columns = [
             {"name": "created_at", "label": "When", "field": "created_at"},

@@ -14,12 +14,15 @@ router = APIRouter()
 def list_notifications(unread_only: bool = False, db: Session = Depends(get_db)):
     q = db.query(Notification)
     if unread_only:
-        q = q.filter(Notification.is_read == False)
+        q = q.filter(not Notification.is_read)
     notifs = q.order_by(Notification.created_at.desc()).limit(50).all()
     return [
         {
-            "id": n.id, "title": n.title, "message": n.message,
-            "severity": n.severity, "is_read": n.is_read,
+            "id": n.id,
+            "title": n.title,
+            "message": n.message,
+            "severity": n.severity,
+            "is_read": n.is_read,
             "created_at": n.created_at.isoformat() if n.created_at else None,
         }
         for n in notifs
@@ -49,17 +52,22 @@ def generate_low_stock_notifications(db: Session = Depends(get_db)):
         if qty <= item.reorder_threshold:
             existing = (
                 db.query(Notification)
-                .filter(Notification.title == f"Low stock: {item.sku}", Notification.is_read == False)
+                .filter(
+                    Notification.title == f"Low stock: {item.sku}",
+                    not Notification.is_read,
+                )
                 .first()
             )
             if existing:
                 continue
             severity = "critical" if qty == 0 else "warning"
-            db.add(Notification(
-                title=f"Low stock: {item.sku}",
-                message=f"{item.name} has only {qty} units left (threshold: {item.reorder_threshold})",
-                severity=severity,
-            ))
+            db.add(
+                Notification(
+                    title=f"Low stock: {item.sku}",
+                    message=f"{item.name} has only {qty} units left (threshold: {item.reorder_threshold})",
+                    severity=severity,
+                )
+            )
             created += 1
     db.commit()
     return {"created": created}

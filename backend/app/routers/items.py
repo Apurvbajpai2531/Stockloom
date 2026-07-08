@@ -65,7 +65,11 @@ def get_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/items", response_model=ItemOut, status_code=201)
-def create_item(payload: ItemCreate, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+def create_item(
+    payload: ItemCreate,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
     item = Item(**payload.model_dump())
     db.add(item)
     try:
@@ -74,24 +78,37 @@ def create_item(payload: ItemCreate, db: Session = Depends(get_db), user: str = 
         db.rollback()
         raise HTTPException(status_code=409, detail="SKU already exists")
     db.refresh(item)
-    log_action(db, "create_item", "item", item.id, user, f"SKU={item.sku}, name={item.name}")
+    log_action(
+        db, "create_item", "item", item.id, user, f"SKU={item.sku}, name={item.name}"
+    )
     return item
 
+
 @router.put("/items/{item_id}", response_model=ItemOut)
-def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+def update_item(
+    item_id: int,
+    payload: ItemUpdate,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
     item = db.query(Item).get(item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 
     # Track price change
     from app.models.price_history import PriceHistory
-    if payload.unit_price is not None and float(payload.unit_price) != float(item.unit_price):
-        db.add(PriceHistory(
-            item_id=item_id,
-            old_price=item.unit_price,
-            new_price=payload.unit_price,
-            changed_by=user,
-        ))
+
+    if payload.unit_price is not None and float(payload.unit_price) != float(
+        item.unit_price
+    ):
+        db.add(
+            PriceHistory(
+                item_id=item_id,
+                old_price=item.unit_price,
+                new_price=payload.unit_price,
+                changed_by=user,
+            )
+        )
 
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, field, value)
@@ -105,7 +122,9 @@ def update_item(item_id: int, payload: ItemUpdate, db: Session = Depends(get_db)
 
 
 @router.delete("/items/{item_id}", status_code=204)
-def delete_item(item_id: int, db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+def delete_item(
+    item_id: int, db: Session = Depends(get_db), user: str = Depends(get_current_user)
+):
     item = db.query(Item).get(item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")

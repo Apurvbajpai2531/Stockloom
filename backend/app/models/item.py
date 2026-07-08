@@ -20,9 +20,15 @@ class Item(Base):
     supplier_id = Column(Integer, ForeignKey("suppliers.id"), nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     category = relationship("Category", back_populates="items")
     supplier = relationship("Supplier", back_populates="items")
-    stock_levels = relationship("StockLevel", back_populates="item", cascade="all, delete-orphan")
-    movements = relationship("StockMovement", back_populates="item", cascade="all, delete-orphan")
+    stock_levels = relationship(
+        "StockLevel", back_populates="item", cascade="all, delete-orphan"
+    )
+    movements = relationship(
+        "StockMovement", back_populates="item", cascade="all, delete-orphan"
+    )

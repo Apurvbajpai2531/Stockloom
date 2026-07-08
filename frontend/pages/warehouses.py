@@ -14,11 +14,15 @@ def render_warehouses():
     with ui.column().classes("w-full p-6 gap-4"):
         ui.label("Warehouses").classes("text-2xl font-bold")
         with ui.row().classes("self-end gap-2"):
-            ui.button("Export List", icon="download", on_click=lambda: export_warehouses()).props("outline")
+            ui.button(
+                "Export List", icon="download", on_click=lambda: export_warehouses()
+            ).props("outline")
             ui.button("Add Warehouse", icon="add", on_click=lambda: open_dialog())
 
         def export_warehouses():
-            import csv, io
+            import csv
+            import io
+
             rows = api.get("/warehouses")
             buffer = io.StringIO()
             if rows:
@@ -36,11 +40,11 @@ def render_warehouses():
         table = ui.table(columns=columns, rows=[], row_key="id").classes("w-full")
         table.add_slot(
             "body-cell-actions",
-            '''
+            """
             <q-td :props="props">
                 <q-btn dense flat icon="delete" color="red" @click="() => $parent.$emit('delete-row', props.row)" />
             </q-td>
-            ''',
+            """,
         )
 
         def refresh():
@@ -70,9 +74,14 @@ def render_warehouses():
                         error_label.text = " | ".join(errors)
                         return
                     try:
-                        api.post("/warehouses", {
-                            "name": name.value.strip(), "code": code.value.strip(), "location": location.value
-                        })
+                        api.post(
+                            "/warehouses",
+                            {
+                                "name": name.value.strip(),
+                                "code": code.value.strip(),
+                                "location": location.value,
+                            },
+                        )
                         ui.notify("Saved", type="positive")
                         dialog.close()
                         refresh()
@@ -97,7 +106,9 @@ def render_warehouses():
                 confirm_dialog.close()
 
             with ui.dialog() as confirm_dialog, ui.card():
-                ui.label(f"Delete warehouse '{row['name']}'? This also removes its stock records.")
+                ui.label(
+                    f"Delete warehouse '{row['name']}'? This also removes its stock records."
+                )
                 with ui.row().classes("justify-end gap-2 mt-2"):
                     ui.button("Cancel", on_click=confirm_dialog.close)
                     ui.button("Delete", on_click=confirm_delete).props("color=red")

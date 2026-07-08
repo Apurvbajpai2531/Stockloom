@@ -28,7 +28,9 @@ def stockout_risk(db: Session = Depends(get_db)):
     )
 
     outbound_sums = dict(
-        db.query(StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0))
+        db.query(
+            StockMovement.item_id, func.coalesce(func.sum(StockMovement.quantity), 0)
+        )
         .filter(
             StockMovement.movement_type == MovementType.OUTBOUND,
             StockMovement.created_at >= cutoff,
@@ -55,19 +57,23 @@ def stockout_risk(db: Session = Depends(get_db)):
             else:
                 risk = "healthy"
 
-        results.append({
-            "item_id": item.id,
-            "sku": item.sku,
-            "name": item.name,
-            "current_quantity": current_qty,
-            "daily_velocity": round(daily_velocity, 2),
-            "days_until_stockout": days_until_stockout,
-            "risk": risk,
-        })
+        results.append(
+            {
+                "item_id": item.id,
+                "sku": item.sku,
+                "name": item.name,
+                "current_quantity": current_qty,
+                "daily_velocity": round(daily_velocity, 2),
+                "days_until_stockout": days_until_stockout,
+                "risk": risk,
+            }
+        )
 
     # Sort: critical first, then by soonest stockout
     risk_order = {"critical": 0, "warning": 1, "healthy": 2, "no_movement": 3}
-    results.sort(key=lambda r: (risk_order[r["risk"]], r["days_until_stockout"] or 9999))
+    results.sort(
+        key=lambda r: (risk_order[r["risk"]], r["days_until_stockout"] or 9999)
+    )
     return results
 
 
@@ -99,10 +105,19 @@ def stockout_risk_for_item(item_id: int, db: Session = Depends(get_db)):
     daily_velocity = outbound_total / LOOKBACK_DAYS
 
     if daily_velocity <= 0:
-        return {"daily_velocity": 0, "days_until_stockout": None, "risk": "no_movement", "current_quantity": current_qty}
+        return {
+            "daily_velocity": 0,
+            "days_until_stockout": None,
+            "risk": "no_movement",
+            "current_quantity": current_qty,
+        }
 
     days_until_stockout = round(current_qty / daily_velocity, 1)
-    risk = "critical" if days_until_stockout <= 7 else ("warning" if days_until_stockout <= 21 else "healthy")
+    risk = (
+        "critical"
+        if days_until_stockout <= 7
+        else ("warning" if days_until_stockout <= 21 else "healthy")
+    )
 
     return {
         "daily_velocity": round(daily_velocity, 2),
@@ -126,14 +141,18 @@ def rebalance_suggestions(db: Session = Depends(get_db)):
         if len(levels) < 2:
             continue
 
-        surplus = [l for l in levels if l.quantity > item.reorder_threshold * 1.5]
-        deficit = [l for l in levels if l.quantity <= item.reorder_threshold]
+        surplus = [
+            level for level in levels if level.quantity > item.reorder_threshold * 1.5
+        ]
+        deficit = [
+            level for level in levels if level.quantity <= item.reorder_threshold
+        ]
 
         if not surplus or not deficit:
             continue
 
-        surplus.sort(key=lambda l: l.quantity, reverse=True)
-        deficit.sort(key=lambda l: l.quantity)
+        surplus.sort(key=lambda level: level.quantity, reverse=True)
+        deficit.sort(key=lambda level: level.quantity)
 
         source = surplus[0]
         target = deficit[0]
@@ -147,17 +166,19 @@ def rebalance_suggestions(db: Session = Depends(get_db)):
         source_wh = db.query(Warehouse).get(source.warehouse_id)
         target_wh = db.query(Warehouse).get(target.warehouse_id)
 
-        suggestions.append({
-            "item_id": item.id,
-            "sku": item.sku,
-            "name": item.name,
-            "from_warehouse_id": source.warehouse_id,
-            "from_warehouse_name": source_wh.name if source_wh else "Unknown",
-            "from_quantity": source.quantity,
-            "to_warehouse_id": target.warehouse_id,
-            "to_warehouse_name": target_wh.name if target_wh else "Unknown",
-            "to_quantity": target.quantity,
-            "suggested_transfer_qty": transferable,
-        })
+        suggestions.append(
+            {
+                "item_id": item.id,
+                "sku": item.sku,
+                "name": item.name,
+                "from_warehouse_id": source.warehouse_id,
+                "from_warehouse_name": source_wh.name if source_wh else "Unknown",
+                "from_quantity": source.quantity,
+                "to_warehouse_id": target.warehouse_id,
+                "to_warehouse_name": target_wh.name if target_wh else "Unknown",
+                "to_quantity": target.quantity,
+                "suggested_transfer_qty": transferable,
+            }
+        )
 
     return suggestions

@@ -1,9 +1,40 @@
 import logging
-
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
+from app.core.database import Base, engine
+from app.core.config import settings
+from app.routers import (
+    organization,
+    items,
+    stock,
+    dashboard,
+    purchase_orders,
+    alerts,
+    reports,
+    auth,
+    audit,
+    qrcodes,
+    forecasting,
+    notifications,
+    ws,
+    network,
+    insights,
+    assistant,
+    anomaly,
+    supplier_analytics,
+    rules,
+    price_history,
+    reservations,
+    cycle_count,
+    cost_analysis,
+)
+from app.core.database import SessionLocal
+from app.core.auth import ensure_default_admin
+from fastapi import Depends
+from app.core.auth import get_current_user
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,24 +42,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger("stockloom")
 
-from app.core.database import Base, engine
-from app.core.config import settings
-from app.routers import organization, items, stock, dashboard, purchase_orders, alerts, reports, auth, audit, qrcodes, forecasting, notifications, ws, network, insights, assistant, analytics, anomaly, supplier_analytics, rules, price_history, reservations, cycle_count, cost_analysis
 # Create tables if they don't exist (use Alembic migrations for production-grade workflows)
 Base.metadata.create_all(bind=engine)
-
-from app.core.database import SessionLocal
-from app.core.auth import ensure_default_admin
-from app.routers.dashboard import router as dashboard_public_router
 
 _db = SessionLocal()
 ensure_default_admin(_db)
 _db.close()
 
 app = FastAPI(title=settings.APP_NAME, version="1.0.0")
-
-import os
-
 allowed_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
@@ -39,43 +60,79 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from fastapi import Depends
-from app.core.auth import get_current_user
-
 protected = [Depends(get_current_user)]
 
-app.include_router(organization.router, prefix="/api", tags=["organization"], dependencies=protected)
+app.include_router(
+    organization.router, prefix="/api", tags=["organization"], dependencies=protected
+)
 app.include_router(items.router, prefix="/api", tags=["items"], dependencies=protected)
 app.include_router(stock.router, prefix="/api", tags=["stock"], dependencies=protected)
-app.include_router(dashboard.router, prefix="/api", tags=["dashboard"], dependencies=protected)
+app.include_router(
+    dashboard.router, prefix="/api", tags=["dashboard"], dependencies=protected
+)
 app.include_router(dashboard.public_router, prefix="/api", tags=["dashboard-public"])
-app.include_router(purchase_orders.router, prefix="/api", tags=["purchase-orders"], dependencies=protected)
-app.include_router(alerts.router, prefix="/api", tags=["alerts"], dependencies=protected)
-app.include_router(reports.router, prefix="/api", tags=["reports"], dependencies=protected)
+app.include_router(
+    purchase_orders.router,
+    prefix="/api",
+    tags=["purchase-orders"],
+    dependencies=protected,
+)
+app.include_router(
+    alerts.router, prefix="/api", tags=["alerts"], dependencies=protected
+)
+app.include_router(
+    reports.router, prefix="/api", tags=["reports"], dependencies=protected
+)
 app.include_router(auth.router, prefix="/api", tags=["auth"])  # login itself stays open
 app.include_router(audit.router, prefix="/api", tags=["audit"], dependencies=protected)
-app.include_router(qrcodes.router, prefix="/api", tags=["qrcodes"])  # public - just renders a QR image, no sensitive data
-app.include_router(forecasting.router, prefix="/api", tags=["forecasting"], dependencies=protected)
-app.include_router(notifications.router, prefix="/api", tags=["notifications"], dependencies=protected)
-app.include_router(ws.router, prefix="/api", tags=["websocket"])  # no auth dependency — WS auth handled differently
-app.include_router(network.router, prefix="/api", tags=["network"], dependencies=protected)
-app.include_router(insights.router, prefix="/api", tags=["insights"], dependencies=protected)
-app.include_router(assistant.router, prefix="/api", tags=["assistant"], dependencies=protected)
-app.include_router(anomaly.router, prefix="/api", tags=["anomaly"], dependencies=protected)
-app.include_router(supplier_analytics.router, prefix="/api", tags=["supplier-analytics"], dependencies=protected)
+app.include_router(
+    qrcodes.router, prefix="/api", tags=["qrcodes"]
+)  # public - just renders a QR image, no sensitive data
+app.include_router(
+    forecasting.router, prefix="/api", tags=["forecasting"], dependencies=protected
+)
+app.include_router(
+    notifications.router, prefix="/api", tags=["notifications"], dependencies=protected
+)
+app.include_router(
+    ws.router, prefix="/api", tags=["websocket"]
+)  # no auth dependency — WS auth handled differently
+app.include_router(
+    network.router, prefix="/api", tags=["network"], dependencies=protected
+)
+app.include_router(
+    insights.router, prefix="/api", tags=["insights"], dependencies=protected
+)
+app.include_router(
+    assistant.router, prefix="/api", tags=["assistant"], dependencies=protected
+)
+app.include_router(
+    anomaly.router, prefix="/api", tags=["anomaly"], dependencies=protected
+)
+app.include_router(
+    supplier_analytics.router,
+    prefix="/api",
+    tags=["supplier-analytics"],
+    dependencies=protected,
+)
 app.include_router(rules.router, prefix="/api", tags=["rules"], dependencies=protected)
-app.include_router(price_history.router, prefix="/api", tags=["price-history"], dependencies=protected)
-app.include_router(reservations.router, prefix="/api", tags=["reservations"], dependencies=protected)
-app.include_router(cycle_count.router, prefix="/api", tags=["cycle-count"], dependencies=protected)
-app.include_router(cost_analysis.router, prefix="/api", tags=["cost-analysis"], dependencies=protected)
-
-
+app.include_router(
+    price_history.router, prefix="/api", tags=["price-history"], dependencies=protected
+)
+app.include_router(
+    reservations.router, prefix="/api", tags=["reservations"], dependencies=protected
+)
+app.include_router(
+    cycle_count.router, prefix="/api", tags=["cycle-count"], dependencies=protected
+)
+app.include_router(
+    cost_analysis.router, prefix="/api", tags=["cost-analysis"], dependencies=protected
+)
 
 
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "app": settings.APP_NAME}
-
 
 
 @app.exception_handler(SQLAlchemyError)
