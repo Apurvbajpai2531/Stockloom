@@ -1,5 +1,5 @@
 # Goal - to check whether the application code coverage doesn't have security threats/issues
-
+#Added
 name: Sonar Qube Scan
 
 on:
