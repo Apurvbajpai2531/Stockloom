@@ -1,0 +1,74 @@
+name: Dependency Scan
+
+on:
+  workflow_call:
+
+jobs:
+
+  dependency-scan:
+
+    name: Python Dependency Scan
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      - name: Install pip-audit
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit
+
+
+      - name: Create Reports Directory
+        run: |
+          mkdir -p reports
+
+
+      - name: Scan Backend Dependencies
+        continue-on-error: true
+        run: |
+          pip-audit \
+          -r backend/requirements.txt \
+          -f json \
+          -o reports/backend-dependency-report.json
+
+
+      - name: Scan Frontend Dependencies
+        continue-on-error: true
+        run: |
+          pip-audit \
+          -r frontend/requirements.txt \
+          -f json \
+          -o reports/frontend-dependency-report.json
+
+
+      - name: Install Safety
+        run: |
+          pip install safety
+
+
+      - name: Safety Backend Scan
+        continue-on-error: true
+        run: |
+          safety check \
+          -r backend/requirements.txt \
+          --output json \
+          > reports/backend-safety-report.json
+
+
+      - name: Upload Dependency Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stockloom-dependency-reports
+          path: reports/
+          retention-days: 5
