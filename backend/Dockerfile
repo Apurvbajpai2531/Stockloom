@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN python -m pip install --upgrade pip==25.1.1 && \
+RUN pip install pip==25.1.1 && \
     pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 COPY . .
