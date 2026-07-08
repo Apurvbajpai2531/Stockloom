@@ -26,7 +26,7 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Docker Build ${{ matrix.folders}}
-              run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devboard-${{ matrix.folders }}:latest .
+              run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/Stockloom-${{ matrix.folders }}:latest .
               working-directory: ${{ matrix.folders}}
 
             - name: Run Trivy vulnerability scanner
