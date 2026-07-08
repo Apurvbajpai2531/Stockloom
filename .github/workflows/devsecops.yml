@@ -23,7 +23,7 @@ jobs:
 
   code-tests:
     name: Application Tests
-    uses: ./.github/workflows/code-tests.yml
+    uses: ./.github/workflows/code-test.yml
 
 
   secret-scanning:
