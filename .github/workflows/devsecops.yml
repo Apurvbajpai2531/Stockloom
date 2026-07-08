@@ -42,11 +42,9 @@ jobs:
     secrets: inherit
 
 
-  sonar-scan:
-    name: SonarQube Code Analysis
-    uses: ./.github/workflows/sonar-scan.yml
-    secrets: inherit
-
+  semgrep-scan:
+    name: Semgrep Security Scan
+    uses: ./.github/workflows/semgrep-scan.yml
 
 
   # ---------------- CD ----------------
@@ -60,7 +58,7 @@ jobs:
       - secret-scanning
       - dependency-scan
       - docker-scans
-      - sonar-scan
+      - semgrep-scan
 
     uses: ./.github/workflows/docker-push.yml
     secrets: inherit
