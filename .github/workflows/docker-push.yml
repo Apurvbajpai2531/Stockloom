@@ -27,5 +27,5 @@ jobs:
               with:
                 context: ./${{ matrix.folders}}
                 push: true
-                tags: ${{ secrets.DOCKERHUB_USERNAME }}/Stockloom-${{ matrix.folders}}:latest
+                tags: ${{ secrets.DOCKERHUB_USERNAME }}/stockloom-${{ matrix.folders}}:latest
                 
