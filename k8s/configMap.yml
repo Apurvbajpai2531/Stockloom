@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stockloom-configmap
+  namespace: stockloom
+data:
+  POSTGRES_USER: stockloom
