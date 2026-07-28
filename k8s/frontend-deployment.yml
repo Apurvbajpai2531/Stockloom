@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: stockloom-frontend-deployment
+  namespace: stockloom
+  labels:
+    app: stockloom-frontend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: stockloom-frontend
+
+  template:
+    metadata:
+      labels:
+        app: stockloom-frontend
+
+    spec:
+      containers:
+      - name: stockloom-frontend
+        image: apurv25/stockloom-frontend:latest
+
+        ports:
+        - containerPort: 8081
+
+        env:
+        - name: API_BASE_URL
+          value: "http://stockloom-backend-service:8000/api"

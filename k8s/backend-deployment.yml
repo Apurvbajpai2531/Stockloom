@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: stockloom-backend-deployment
+  namespace: stockloom
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: stockloom-backend
+
+  template:
+    metadata:
+      labels:
+        app: stockloom-backend
+
+    spec:
+      containers:
+      - name: stockloom-backend
+
+        image: apurv25/stockloom-backend:latest
+
+        ports:
+        - containerPort: 8000
+
+        env:
+        - name: DATABASE_URL
+          value: postgresql://stockloom:stockloom@stockloom-postgres-service:5432/stockloom

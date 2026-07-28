@@ -129,6 +129,16 @@ app.include_router(
     cost_analysis.router, prefix="/api", tags=["cost-analysis"], dependencies=protected
 )
 
+@app.get("/")
+def root():
+    return {
+        "application": settings.APP_NAME,
+        "status": "running",
+        "message": "StockLoom Backend API is running",
+        "docs": "/docs",
+        "health": "/api/health"
+    }
+
 
 @app.get("/api/health")
 def health_check():

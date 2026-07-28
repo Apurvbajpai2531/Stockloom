@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: PersistentVolume
+
+metadata:
+  name: postgres-stateful-pv
+  labels:
+    app: stockloom-postgres
+
+spec:
+  capacity:
+    storage: 500Mi
+
+  accessModes:
+    - ReadWriteOnce
+
+  storageClassName: manual
+
+  persistentVolumeReclaimPolicy: Retain
+
+  hostPath:
+    path: /mnt/stockloom-postgres-stateful
