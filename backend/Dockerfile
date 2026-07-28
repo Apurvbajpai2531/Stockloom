@@ -26,6 +26,11 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Install curl for Docker healthcheck
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /app /app
 
