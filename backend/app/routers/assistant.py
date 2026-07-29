@@ -1,13 +1,13 @@
 import re
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.item import Item
-from app.models.stock import StockLevel
 from app.models.organization import Warehouse
+from app.models.stock import StockLevel
 
 router = APIRouter()
 
@@ -129,8 +129,9 @@ def assistant_query(payload: dict, db: Session = Depends(get_db)):
 
     # Intent: forecasting / days until stockout
     if any(kw in text for kw in ["days until", "stockout", "how long", "run out"]):
-        from app.models.stock import StockMovement, MovementType
         from datetime import datetime, timedelta, timezone
+
+        from app.models.stock import MovementType, StockMovement
 
         sku_match2 = re.search(r"sku[-\s]?(\w+)", text)
         if sku_match2:

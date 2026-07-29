@@ -1,40 +1,39 @@
 import logging
 import os
-from fastapi import FastAPI, Request
+
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
-from app.core.database import Base, engine
+
+from app.core.auth import ensure_default_admin, get_current_user
 from app.core.config import settings
+from app.core.database import Base, SessionLocal, engine
 from app.routers import (
-    organization,
-    items,
-    stock,
-    dashboard,
-    purchase_orders,
     alerts,
-    reports,
-    auth,
-    audit,
-    qrcodes,
-    forecasting,
-    notifications,
-    ws,
-    network,
-    insights,
-    assistant,
     anomaly,
-    supplier_analytics,
-    rules,
-    price_history,
-    reservations,
-    cycle_count,
+    assistant,
+    audit,
+    auth,
     cost_analysis,
+    cycle_count,
+    dashboard,
+    forecasting,
+    insights,
+    items,
+    network,
+    notifications,
+    organization,
+    price_history,
+    purchase_orders,
+    qrcodes,
+    reports,
+    reservations,
+    rules,
+    stock,
+    supplier_analytics,
+    ws,
 )
-from app.core.database import SessionLocal
-from app.core.auth import ensure_default_admin
-from fastapi import Depends
-from app.core.auth import get_current_user
 
 logging.basicConfig(
     level=logging.INFO,
@@ -129,6 +128,7 @@ app.include_router(
     cost_analysis.router, prefix="/api", tags=["cost-analysis"], dependencies=protected
 )
 
+
 @app.get("/")
 def root():
     return {
@@ -136,7 +136,7 @@ def root():
         "status": "running",
         "message": "StockLoom Backend API is running",
         "docs": "/docs",
-        "health": "/api/health"
+        "health": "/api/health",
     }
 
 

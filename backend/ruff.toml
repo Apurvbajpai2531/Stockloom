@@ -1,0 +1,7 @@
+[lint]
+ignore = [
+    "E501",   # line too long
+    "B008",   # Depends() in function defaults (FastAPI standard pattern)
+    "LOG014", # exc_info outside handler
+]
+select = ["E", "W", "F", "I"]

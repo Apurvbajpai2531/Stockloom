@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.stock import StockLevel, StockMovement, MovementType
 from app.models.item import Item
 from app.models.organization import Warehouse
-from app.schemas.stock import StockMovementCreate, StockMovementOut, StockLevelOut
+from app.models.stock import MovementType, StockLevel, StockMovement
+from app.schemas.stock import StockLevelOut, StockMovementCreate, StockMovementOut
 
 router = APIRouter()
 
@@ -166,6 +166,7 @@ def create_stock_movement(payload: StockMovementCreate, db: Session = Depends(ge
     db.refresh(movement)
 
     import asyncio
+
     from app.routers.ws import broadcast_stock_update
 
     try:
