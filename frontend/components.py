@@ -2,7 +2,7 @@ from nicegui import ui
 
 
 def render_header(active: str = ""):
-    from api_client import get_token, API_BASE
+    from api_client import API_BASE, get_token
 
     token = get_token() or ""
     ui.run_javascript(
@@ -273,7 +273,7 @@ def _add_command_palette():
         overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
     })();
     </script>
-                     
+
     """
     )
 

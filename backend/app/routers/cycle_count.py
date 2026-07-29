@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
 
-from app.core.database import get_db
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from app.core.auth import get_current_user
+from app.core.database import get_db
 from app.models.cycle_count import CycleCount, CycleCountLine
 from app.models.stock import StockLevel
 
@@ -133,7 +134,7 @@ def complete_cycle_count(
         )
 
     if apply_adjustments:
-        from app.models.stock import StockLevel, StockMovement, MovementType
+        from app.models.stock import MovementType, StockLevel, StockMovement
 
         for line in cc.lines:
             if line.counted_quantity is not None and line.variance != 0:

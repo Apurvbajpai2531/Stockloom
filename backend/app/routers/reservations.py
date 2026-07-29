@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-from pydantic import BaseModel
 from typing import Optional
 
-from app.core.database import get_db
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+
 from app.core.auth import get_current_user
+from app.core.database import get_db
 from app.models.reservation import StockReservation
 from app.models.stock import StockLevel
 
@@ -111,7 +112,7 @@ def fulfil_reservation(res_id: int, db: Session = Depends(get_db)):
             status_code=400, detail="Only active reservations can be fulfilled"
         )
 
-    from app.models.stock import StockLevel, StockMovement, MovementType
+    from app.models.stock import MovementType, StockLevel, StockMovement
 
     level = (
         db.query(StockLevel)

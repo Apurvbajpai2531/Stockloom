@@ -1,8 +1,8 @@
 from nicegui import ui
 
 from api_client import api
-from components import render_header
 from auth_guard import require_login
+from components import render_header
 
 
 def render_insights():

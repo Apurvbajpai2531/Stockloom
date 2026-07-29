@@ -2,12 +2,12 @@ import enum
 
 from sqlalchemy import (
     Column,
-    Integer,
-    String,
-    ForeignKey,
     DateTime,
-    Numeric,
     Enum,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
     Text,
 )
 from sqlalchemy.orm import relationship
