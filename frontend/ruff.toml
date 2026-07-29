@@ -1,0 +1,9 @@
+[lint]
+ignore = [
+    "E501",    # line too long
+    "BLE001",  # blind Exception catch (NiceGUI mein common pattern hai)
+    "S110",    # try-except-pass (UI mein intentional hai)
+    "SIM117",  # nested with statements (NiceGUI ka syntax hai, change nahi kar sakte)
+    "B008",    # Depends() in defaults
+]
+select = ["E", "W", "F", "I"]
