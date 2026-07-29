@@ -1,5 +1,7 @@
 import datetime
+
 from nicegui import ui
+
 from api_client import api
 from auth_guard import require_login
 

@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")

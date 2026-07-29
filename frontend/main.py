@@ -1,33 +1,32 @@
 from nicegui import ui
 
-from pages.login import render_login
-from pages.welcome import render_welcome
-from pages.dashboard import render_dashboard
-from pages.items import render_items
-from pages.warehouses import render_warehouses
-from pages.movements import render_movements
-from pages.categories import render_categories
-from pages.purchase_orders import render_purchase_orders
-from pages.reports import render_reports
-from pages.item_detail import render_item_detail
-from pages.audit_log import render_audit_log
-from pages.settings import render_settings
-from pages.reorder_suggestions import render_reorder_suggestions
-from pages.forecasting import render_forecasting
-from pages.rebalancing import render_rebalancing
-from pages.network import render_network
-from pages.insights import render_insights
 from pages.analytics import render_analytics
+from pages.audit_log import render_audit_log
+from pages.categories import render_categories
 from pages.command_center import render_command_center
-from pages.warroom import render_warroom
-from pages.dna import render_dna
-from pages.timeline import render_timeline
-from pages.supplier_intelligence import render_supplier_intelligence
-from pages.rules import render_rules
-from pages.reservations import render_reservations
-from pages.cycle_count import render_cycle_count
 from pages.cost_analysis import render_cost_analysis
-
+from pages.cycle_count import render_cycle_count
+from pages.dashboard import render_dashboard
+from pages.dna import render_dna
+from pages.forecasting import render_forecasting
+from pages.insights import render_insights
+from pages.item_detail import render_item_detail
+from pages.items import render_items
+from pages.login import render_login
+from pages.movements import render_movements
+from pages.network import render_network
+from pages.purchase_orders import render_purchase_orders
+from pages.rebalancing import render_rebalancing
+from pages.reorder_suggestions import render_reorder_suggestions
+from pages.reports import render_reports
+from pages.reservations import render_reservations
+from pages.rules import render_rules
+from pages.settings import render_settings
+from pages.supplier_intelligence import render_supplier_intelligence
+from pages.timeline import render_timeline
+from pages.warehouses import render_warehouses
+from pages.warroom import render_warroom
+from pages.welcome import render_welcome
 
 ui.dark_mode(False)
 

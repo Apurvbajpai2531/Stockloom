@@ -1,9 +1,10 @@
-from nicegui import ui
 import os
 
-from components import render_header
-from auth_guard import require_login
+from nicegui import ui
+
 from api_client import api, get_token
+from auth_guard import require_login
+from components import render_header
 
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api")
 
