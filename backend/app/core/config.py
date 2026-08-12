@@ -11,9 +11,11 @@ class Settings(BaseSettings):
     )
     SECRET_KEY: str = os.getenv("SECRET_KEY", "change-this-secret-key")
     LOW_STOCK_DEFAULT_THRESHOLD: int = 10
+    ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "stockloom123")
+    CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
 
-    class Config:
-        env_file = ".env"
+    model_config = {"env_file": ".env", "extra": "ignore"}
 
 
 settings = Settings()

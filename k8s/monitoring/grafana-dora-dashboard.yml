@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stockloom-dora-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  dora-dashboard.json: |
+    {
+      "title": "StockLoom DORA Metrics",
+      "panels": [
+        {
+          "title": "Deployment Frequency",
+          "type": "stat",
+          "targets": [{
+            "expr": "count_over_time(argocd_app_sync_total{app='stockloom'}[7d])",
+            "legendFormat": "Deploys/week"
+          }]
+        },
+        {
+          "title": "Lead Time for Changes",
+          "type": "graph",
+          "targets": [{
+            "expr": "avg(argocd_app_sync_duration_seconds{app='stockloom'})",
+            "legendFormat": "Avg sync time"
+          }]
+        },
+        {
+          "title": "Change Failure Rate",
+          "type": "stat",
+          "targets": [{
+            "expr": "sum(argocd_app_health_status{app='stockloom',health_status='Degraded'}) / sum(argocd_app_sync_total{app='stockloom'})",
+            "legendFormat": "Failure rate"
+          }]
+        },
+        {
+          "title": "MTTR",
+          "type": "graph",
+          "targets": [{
+            "expr": "avg(argocd_app_sync_duration_seconds{app='stockloom',health_status='Healthy'})",
+            "legendFormat": "Recovery time"
+          }]
+        }
+      ]
+    }

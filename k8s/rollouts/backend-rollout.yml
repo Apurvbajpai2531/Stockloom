@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: stockloom-backend
+  namespace: stockloom
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stockloom-backend
+  template:
+    metadata:
+      labels:
+        app: stockloom-backend
+    spec:
+      containers:
+        - name: backend
+          image: apurvbajpai2531/stockloom-backend:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+  strategy:
+    blueGreen:
+      activeService: stockloom-backend-active
+      previewService: stockloom-backend-preview
+      autoPromotionEnabled: false   # manual approve karo
+      scaleDownDelaySeconds: 30
