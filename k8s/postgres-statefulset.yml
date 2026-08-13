@@ -27,7 +27,7 @@ spec:
         image: postgres:16
 
         ports:
-        - containerPort: 5434
+        - containerPort: 5432
 
         env:
         - name: POSTGRES_DB
