@@ -1,7 +1,7 @@
 resource "aws_security_group" "stockloom_sg" {
   name        = "${var.project_name}-sg"
   description = "Security Group for Stockloom"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 22

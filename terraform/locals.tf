@@ -1,5 +1,4 @@
 locals {
-
   common_tags = {
     Project     = var.project_name
     Environment = var.environment
@@ -7,6 +6,9 @@ locals {
     ManagedBy   = "Terraform"
   }
 
-  instance_name = "${var.project_name}-server"
+  tags = local.common_tags
 
+  access_entries = {}
+
+  cluster_name = var.cluster_name
 }
