@@ -56,7 +56,7 @@ spec:
       accessModes:
       - ReadWriteOnce
 
-      storageClassName: manual
+      storageClassName: gp2
 
       resources:
 
