@@ -39,6 +39,8 @@ spec:
         - name: POSTGRES_PASSWORD
           value: stockloom
 
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
 
         volumeMounts:
 
