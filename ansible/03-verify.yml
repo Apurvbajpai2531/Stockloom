@@ -1,0 +1,19 @@
+---
+- name: Verify cluster + app state
+  hosts: local
+  vars_files: [group_vars/all.yml]
+  tasks:
+    - name: Get nodes
+      command: kubectl get nodes
+      register: nodes
+    - debug: {var: nodes.stdout_lines}
+
+    - name: Get argocd application status
+      command: kubectl get application stockloom -n argocd
+      register: app_status
+    - debug: {var: app_status.stdout_lines}
+
+    - name: Get pods in stockloom namespace
+      command: kubectl get pods -n {{ k8s_namespace }}
+      register: pods
+    - debug: {var: pods.stdout_lines}

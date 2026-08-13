@@ -47,7 +47,7 @@ variable "kubernetes_version" {
 variable "node_instance_type" {
   description = "EKS worker node instance type"
   type        = string
-  default     = "t3.small"
+  default     = "t3.medium"
 }
 
 variable "node_min_size" {

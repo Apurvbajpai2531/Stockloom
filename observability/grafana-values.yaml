@@ -1,0 +1,51 @@
+adminUser: admin
+admin:
+  existingSecret: "grafana-admin-secret"
+  userKey: admin-user
+  passwordKey: admin-password
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+persistence:
+  enabled: true
+  storageClassName: gp2
+  size: 1Gi
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: /tmp/dashboards
+  datasources:
+    enabled: true
+    label: grafana_datasource
+    labelValue: "1"
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://stockloom-obs-prometheus.observability.svc:9090
+        access: proxy
+        isDefault: true
+      - name: Loki
+        type: loki
+        url: http://stockloom-obs-loki-gateway.observability.svc
+        access: proxy
+      - name: Tempo
+        type: tempo
+        url: http://stockloom-obs-tempo.observability.svc:3100
+        access: proxy
+
+service:
+  type: ClusterIP
+  port: 80

@@ -1,0 +1,46 @@
+mode: daemonset
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+presets:
+  logsCollection:
+    enabled: true
+    includeCollectorLogs: false
+  kubernetesAttributes:
+    enabled: true
+  hostMetrics:
+    enabled: true
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  exporters:
+    otlp/gateway:
+      endpoint: stockloom-obs-collector-gateway.observability.svc:4317
+      tls:
+        insecure: true
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        exporters: [otlp/gateway]
+      metrics:
+        receivers: [otlp]
+        exporters: [otlp/gateway]
+      logs:
+        receivers: [otlp]
+        exporters: [otlp/gateway]
+
+image:
+  repository: otel/opentelemetry-collector-k8s

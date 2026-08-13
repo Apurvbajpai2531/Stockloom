@@ -1,0 +1,54 @@
+mode: deployment
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8889
+    servicePort: 8889
+    protocol: TCP
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  exporters:
+    otlp/tempo:
+      endpoint: stockloom-obs-tempo.observability.svc:4317
+      tls:
+        insecure: true
+    loki:
+      endpoint: http://stockloom-obs-loki-gateway.observability.svc/loki/api/v1/push
+    prometheus:
+      endpoint: 0.0.0.0:8889
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        exporters: [otlp/tempo]
+      logs:
+        receivers: [otlp]
+        exporters: [loki]
+      metrics:
+        receivers: [otlp]
+        exporters: [prometheus]
+
+image:
+  repository: otel/opentelemetry-collector-k8s

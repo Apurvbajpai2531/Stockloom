@@ -1,0 +1,5 @@
+aws_region: "ap-south-1"
+eks_cluster_name: "stockloom-eks"
+k8s_namespace: "stockloom"
+repo_url: "https://github.com/Apurvbajpai2531/Stockloom.git"
+repo_dest: "/home/user/Stockloom-clone"

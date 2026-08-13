@@ -1,0 +1,9 @@
+dependencies:
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.16.2
+- name: external-secrets
+  repository: https://charts.external-secrets.io
+  version: 0.10.5
+digest: sha256:68ff7b196bf549bcee1460cefdbfc945944c22716e4b26c28b3d83190e0f78ae
+generated: "2026-08-13T15:04:03.249011612+05:30"
