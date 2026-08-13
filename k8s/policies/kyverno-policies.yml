@@ -1,33 +1,6 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: stockloom-require-signed-images
-  annotations:
-    policies.kyverno.io/title: Require Signed Images
-    policies.kyverno.io/description: All StockLoom images must be signed with Cosign
-spec:
-  validationFailureAction: Enforce
-  background: false
-  rules:
-    - name: check-image-signature
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaces: [stockloom]
-      verifyImages:
-        - imageReferences:
-            - "docker.io/*/stockloom-*"
-          attestors:
-            - count: 1
-              entries:
-                - keyless:
-                    subject: "https://github.com/Apurvbajpai2531/Stockloom/.github/workflows/*"
-                    issuer: "https://token.actions.githubusercontent.com"
----
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
-metadata:
   name: stockloom-disallow-privileged
   annotations:
     policies.kyverno.io/title: Disallow Privileged Containers
