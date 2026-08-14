@@ -11,6 +11,10 @@ on:
       - main
       - dev
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
 
 jobs:
 

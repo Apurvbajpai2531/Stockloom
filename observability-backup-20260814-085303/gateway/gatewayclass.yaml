@@ -1,0 +1,44 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: stockloom-gateway-class
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: stockloom-gateway
+  namespace: stockloom
+spec:
+  gatewayClassName: stockloom-gateway-class
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: stockloom-gateway-tls
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stockloom-gateway-tls
+  namespace: stockloom
+spec:
+  secretName: stockloom-gateway-tls
+  dnsNames:
+    - stockloom.local
+  issuerRef:
+    name: stockloom-ca-issuer
+    kind: ClusterIssuer
