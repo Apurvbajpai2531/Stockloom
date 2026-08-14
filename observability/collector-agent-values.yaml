@@ -1,5 +1,8 @@
 mode: daemonset
 
+image:
+  repository: otel/opentelemetry-collector-k8s
+
 resources:
   requests:
     cpu: 25m
@@ -41,6 +44,3 @@ config:
       logs:
         receivers: [otlp]
         exporters: [otlp/gateway]
-
-image:
-  repository: otel/opentelemetry-collector-k8s

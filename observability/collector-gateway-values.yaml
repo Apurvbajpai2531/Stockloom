@@ -1,6 +1,9 @@
 mode: deployment
 replicaCount: 1
 
+image:
+  repository: otel/opentelemetry-collector-contrib
+
 resources:
   requests:
     cpu: 50m
@@ -14,11 +17,6 @@ ports:
     enabled: true
     containerPort: 4317
     servicePort: 4317
-    protocol: TCP
-  metrics:
-    enabled: true
-    containerPort: 8889
-    servicePort: 8889
     protocol: TCP
 
 config:
@@ -34,10 +32,10 @@ config:
       endpoint: stockloom-obs-tempo.observability.svc:4317
       tls:
         insecure: true
-    loki:
-      endpoint: http://stockloom-obs-loki-gateway.observability.svc/loki/api/v1/push
-    prometheus:
-      endpoint: 0.0.0.0:8889
+    otlphttp/loki:
+      endpoint: http://stockloom-obs-loki-gateway.observability.svc:3100/otlp
+      tls:
+        insecure: true
   service:
     pipelines:
       traces:
@@ -45,10 +43,4 @@ config:
         exporters: [otlp/tempo]
       logs:
         receivers: [otlp]
-        exporters: [loki]
-      metrics:
-        receivers: [otlp]
-        exporters: [prometheus]
-
-image:
-  repository: otel/opentelemetry-collector-k8s
+        exporters: [otlphttp/loki]

@@ -1,0 +1,16 @@
+namespace: monitoring
+
+prometheus:
+  enabled: true
+
+grafana:
+  enabled: true
+
+loki:
+  enabled: true
+
+tempo:
+  enabled: true
+
+otel:
+  enabled: true

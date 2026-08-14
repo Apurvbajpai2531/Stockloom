@@ -34,7 +34,7 @@ datasources:
     datasources:
       - name: Prometheus
         type: prometheus
-        url: http://stockloom-obs-prometheus.observability.svc:9090
+        url: http://stockloom-obs-prometheus-k-prometheus.observability.svc:9090
         access: proxy
         isDefault: true
       - name: Loki
@@ -43,7 +43,7 @@ datasources:
         access: proxy
       - name: Tempo
         type: tempo
-        url: http://stockloom-obs-tempo.observability.svc:3100
+        url: http://stockloom-obs-tempo.observability.svc:3200
         access: proxy
 
 service:

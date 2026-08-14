@@ -1,0 +1,6 @@
+apiVersion: v2
+name: stockloom-observability
+description: StockLoom observability configuration
+type: application
+version: 1.0.0
+appVersion: "1.0"
