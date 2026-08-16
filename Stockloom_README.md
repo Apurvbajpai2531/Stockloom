@@ -296,7 +296,7 @@ Hadolint lints Dockerfiles for common mistakes and security anti-patterns.
 **Backend Dockerfile**
 ```bash
 hadolint backend/Dockerfile
-```
+````
 
 **Frontend Dockerfile**
 ```bash
