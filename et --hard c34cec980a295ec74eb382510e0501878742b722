@@ -1,0 +1,548 @@
+[33mcommit 8e6ef3850a96d43ebfeabfe4dbad8eb07536e5fa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Sat Aug 15 17:55:58 2026 +0530
+
+    fixex .github/workflows/docker-push.yml
+
+[33mcommit c34cec980a295ec74eb382510e0501878742b722[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Aug 14 22:47:49 2026 +0530
+
+    Added images to Project
+
+[33mcommit 4c585888ce42c48b3beaa82127e420c4305260a2[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Aug 14 22:35:41 2026 +0530
+
+    Added images to Project
+
+[33mcommit afb40b86466189f7c05d13d4e120b0718665d857[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Aug 14 16:31:31 2026 +0530
+
+    fix: grant packages:write and id-token:write permissions for docker-push reusable workflow
+
+[33mcommit 22a5290e608fe46d9b8b6cf36155f37a720af9a8[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Aug 14 16:17:43 2026 +0530
+
+    Added and fixes the issues of the observability
+
+[33mcommit f5307e7dff3add8b98fe31298e9bad401ab770fd[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Aug 14 08:41:14 2026 +0530
+
+    revert: t3.medium not free-tier eligible on this account, back to t3.small
+
+[33mcommit 6dc805603e43c0d91fe82b325c584a8c1f3c8dac[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 18:32:22 2026 +0530
+
+    fix: upgrade node instance type to t3.medium for observability stack memory needs
+
+[33mcommit 862d7684491faaa9d2598c0cb3f067d00aadc2d0[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 15:38:28 2026 +0530
+
+    fixes maded
+
+[33mcommit f8ddd6c804ac1255d89ca3392967e5fac5e784f7[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 13:08:20 2026 +0530
+
+    Add ArgoCD Application manifest
+
+[33mcommit c814d7106db89435e436643bd3430c8890ab7a65[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 12:58:34 2026 +0530
+
+    Remove Kyverno signed-images policy (redundant with CI-level Cosign+Trivy gate)
+
+[33mcommit 20a9d88cec983b9def1c95d0e997aadaeee9df9a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 12:47:08 2026 +0530
+
+    Fix Kyverno policy: verify -> verifyImages, capitalize Enforce
+
+[33mcommit 4bf755720ad7d2dbe6e58d7802b85e569294c897[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 09:07:18 2026 +0530
+
+    fix: set PGDATA to subdirectory to avoid lost+found initdb error on EBS volume
+
+[33mcommit 9cc9bd89836d348d179439ba69f69ef969ce3ba2[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 08:56:42 2026 +0530
+
+    fix: remove duplicate postgres Deployment and hostPath PVs, use gp2 dynamic storage
+
+[33mcommit 52d753c4202caceacdb1ef9dcd34ef5dfebe1b96[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 08:52:16 2026 +0530
+
+    fixes the postgres problem
+
+[33mcommit 162176910ce08bbbdcf282bcb11040deafb32915[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Aug 13 08:33:03 2026 +0530
+
+    Added the iaac and update config
+
+[33mcommit 68f540f3ca6058963a4ad529498da52d26c62f00[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Aug 12 17:00:01 2026 +0530
+
+    Added day terraform-ci-yml
+
+[33mcommit 993aba1959a1b60e08552db53c185bfd367867af[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Aug 12 16:52:20 2026 +0530
+
+    Add Trivy gate, Cosign signing, SBOM generation to docker-push workflow
+
+[33mcommit 00f275ccf3e8e0eb2c5b6653f40f29d7502fd878[m
+Merge: 1d92127 9c6825c
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Wed Jul 29 12:01:36 2026 +0530
+
+    Merge pull request #7 from Apurvbajpai2531/dev
+    
+    Refixes Changes
+
+[33mcommit 9c6825c5978f8a290700590f33a2f36c80da3ade[m[33m ([m[1;31morigin/dev[m[33m)[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 29 11:36:23 2026 +0530
+
+    fix: fix all frontend import sorting
+
+[33mcommit a63ffee4a91878fdc2626f719bdb2703bdee754f[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 29 11:32:27 2026 +0530
+
+    fix: remove trailing whitespace in components.py
+
+[33mcommit c069c3c4cd91bad899993f9d13b0cd5613e09f5d[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 29 11:27:36 2026 +0530
+
+    fix: auto-fix ruff import sorting, black formatting, add ruff.toml config
+
+[33mcommit 1d921270dddcbb8235795cd2d297d15fe450c207[m
+Merge: 13af121 16db7f6
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Tue Jul 28 18:49:29 2026 +0530
+
+    Refix
+    
+    Added some changes
+
+[33mcommit 16db7f6a40a13b508cfeb68f9ca93c1cbbf652d7[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 28 18:45:00 2026 +0530
+
+    Added some changes
+
+[33mcommit 13af1218189fe8608e82ee9327207ad98d1d2c93[m
+Merge: f9cd6de 1d25890
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Tue Jul 28 17:40:17 2026 +0530
+
+    Added AWS Infrastructure
+
+[33mcommit 1d25890f1610c3f4654174ed8bf1d9a34fd6a604[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 28 17:37:33 2026 +0530
+
+    Add AWS infrastructure using Terraform
+
+[33mcommit fd6d41f138642e5786960bb9191809153b23feec[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Jul 10 18:25:17 2026 +0530
+
+    Added k8s setup
+
+[33mcommit bf03b286df986abfbd37154bd3d4165c81b26c26[m
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Wed Jul 8 18:56:38 2026 +0530
+
+    Rename README.md to Stockloom_README.md
+
+[33mcommit f9cd6deb4c921eabdaf07df7d53c575404f036f3[m
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Wed Jul 8 18:56:04 2026 +0530
+
+    Updating Readme.md
+
+[33mcommit 586e33cf19519a54fba3e38239e90f7ce408919f[m
+Merge: f431c11 c4c3408
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Wed Jul 8 18:55:10 2026 +0530
+
+    DevSecOps Pipeline
+    
+    Desvsecops Pipeline Added
+
+[33mcommit c4c3408b640b01ee8b263ab0c11f3933263ac81f[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 18:53:39 2026 +0530
+
+    Added Readme.md
+
+[33mcommit 2b208001d525a0d195d2da3a65a6873e7c8d495b[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 18:33:04 2026 +0530
+
+    Added fixes Sonar scan
+
+[33mcommit 972710bcc49fc254f023a4d216208b02b6e9c72b[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 18:28:58 2026 +0530
+
+    Added fixes Sonar scan
+
+[33mcommit 5dfa1f8fdf8cd3722c832a5b9e588612c060f310[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 18:19:45 2026 +0530
+
+    Added fixes Sonar scan
+
+[33mcommit 6a2aa72263a4f9bdee26a056ab4feb5db44cf14a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:39:08 2026 +0530
+
+    Added Devsecops
+
+[33mcommit ba0bad86bdf9382ef35d91c6991de03a680b9ac4[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:35:55 2026 +0530
+
+    Added Devsecops
+
+[33mcommit 49dba4af07a5f070d85a4879cc9a3ef9782c736a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:31:20 2026 +0530
+
+    Added Devsecops
+
+[33mcommit b8a33a3fa92bf1dc5f92a8d464aa254bbbce08aa[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:25:17 2026 +0530
+
+    Fix Dockerfile hadolint warnings
+
+[33mcommit 518878a17b1202952a585d8c9eb579559a9d2bab[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:19:23 2026 +0530
+
+    Added Fixes
+
+[33mcommit 584a9884d4288754f4456c3d853bb3b7d518734a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:14:02 2026 +0530
+
+    Fixes Issues
+
+[33mcommit 15c1aba4556b22d26e8be6e889f7c4ec02c43781[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:05:22 2026 +0530
+
+    Add backend tests
+
+[33mcommit fd03a560a6408d9ab87015330d9b40199594759b[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 17:01:24 2026 +0530
+
+    Added code quality
+
+[33mcommit 3e6e7b3a9400007aa7662435c4586a2069030fd1[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:53:11 2026 +0530
+
+    Added devsecops file
+
+[33mcommit 53dddfb51c71dcf28fe47f8a675e138b5b3be231[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:49:43 2026 +0530
+
+    Added devsecops file
+
+[33mcommit 5d8dc3e0d5f99ae8b8f7960325592da73d6d08ec[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:45:51 2026 +0530
+
+    Added devsecops file
+
+[33mcommit 8f26e5c570a6c07ee89046bff867c917a02028f8[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:41:41 2026 +0530
+
+    Added Devsecops final file
+
+[33mcommit 8591b448ecc7bb0c5640e7de4b59ee18ae51b6d1[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:33:53 2026 +0530
+
+    add sonar scan
+
+[33mcommit f62a68d31152ea2f31e3de97d1d994c90ad3d90a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 16:11:03 2026 +0530
+
+    Added docker scans file
+
+[33mcommit 4518722bcc31e8392c1b5e7782ead70901b3130f[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 15:51:13 2026 +0530
+
+    Added Docker push
+
+[33mcommit c6519caba42e31e63eadfd215b8a84d19dd54db2[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 14:00:33 2026 +0530
+
+    Added Code Test file
+
+[33mcommit 41a2bb6b32c44b6940674f15c85a70f3b2c46fbf[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 13:53:47 2026 +0530
+
+    Added Code Security
+
+[33mcommit 95a594a91e5629a001969ec3f0b151ad1e1af041[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 11:40:36 2026 +0530
+
+    Added Linter
+
+[33mcommit 1ff7dd13cfd8c26a711f0d875427f3c322341a8e[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 8 11:30:35 2026 +0530
+
+    Adding fixes changes
+
+[33mcommit c1d0ee4cb1b3f68f9ff5e9aefc4d0d16fe66941c[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:50:59 2026 +0530
+
+    Added Linter file
+
+[33mcommit ed3e7e18d3b7e805b395254cab44cec7484bbc85[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:47:40 2026 +0530
+
+    Format frontend code with black
+
+[33mcommit d7c13ce953c91f5b2605c2b82f3662a30ddb2530[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:36:23 2026 +0530
+
+    Format backend code with black
+
+[33mcommit 1f580adaab022a59d52a17ce423d80f61091b381[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:33:06 2026 +0530
+
+    Fix ruff model exports
+
+[33mcommit d608fbd8de7d115829076aa09f05df6c14b57343[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:25:55 2026 +0530
+
+    Format backend code with black
+
+[33mcommit bf50220c5cbde335dbff6d0cf2ab29b28ea00b2a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:22:20 2026 +0530
+
+    Fix ruff lint errors and update CI checks
+
+[33mcommit e9b9201bd2d0665ca69b1c14f4446f67d3c5e785[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 18:16:57 2026 +0530
+
+    Added linter
+
+[33mcommit 80bd09c50a65b0cd3ed791561e1ccaa619c8def0[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 17:46:31 2026 +0530
+
+    Adding linter
+
+[33mcommit 1d3d4d9c9494aa1d9f46a7159b82cdd5472bff06[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 13:40:58 2026 +0530
+
+    Modifying by adding secrets and artifacts to ci
+
+[33mcommit f21ea21f1784cfc7cccdbf149f7d3f39a89c3630[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 13:05:21 2026 +0530
+
+    Updating Ci
+
+[33mcommit f431c11633afc91847bb41cd3cfc3392e8308452[m
+Merge: 953f394 edb881c
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Tue Jul 7 12:37:51 2026 +0530
+
+    Merge pull request #3 from Apurvbajpai2531/dev
+    
+    Added the Stockloom CI
+
+[33mcommit edb881c030461e9eee7b2bd21c4229037de7986b[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 12:36:33 2026 +0530
+
+    Added the Stockloom CI
+
+[33mcommit 953f394223c299eb52f30cc48828cd8894a4b99a[m
+Merge: 40a19ed 375c5d7
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Tue Jul 7 12:28:55 2026 +0530
+
+    Added the Ci yml file
+    
+    Added the Stockloom CI
+
+[33mcommit 375c5d7557395c516eca9d21caae045844a61634[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jul 7 12:23:26 2026 +0530
+
+    Added the Stockloom CI
+
+[33mcommit 40a19ed625d2ca4d53aad2bade4119f7d9b06a9e[m
+Merge: 0a9dd02 3e76190
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Mon Jul 6 18:25:36 2026 +0530
+
+    Merge pull request #1 from Apurvbajpai2531/dev
+    
+    Containerization
+
+[33mcommit 3e76190ba3eb8bb5a296f372c13bf5e98be50f83[m
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Mon Jul 6 18:23:39 2026 +0530
+
+    Updating Readme.md
+    
+    Updated README to enhance clarity and structure, including tech stack, features, local run instructions, and access URLs.
+
+[33mcommit 6179acfaaf07452bfa85ddc8c3ca985c949aec5e[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jul 6 18:17:18 2026 +0530
+
+    Added the docker file nad docker compose file
+
+[33mcommit 0a9dd020a79510b6f432e5a4f61b712c54cec2db[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Fri Jul 3 12:23:58 2026 +0530
+
+    Added cycle count and cost analysis to project
+
+[33mcommit e0501ba286e338ff2361becba8f322d1c8da6e7e[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Thu Jul 2 11:53:12 2026 +0530
+
+    Adding New Features to Ui and backend
+
+[33mcommit d191f4ba64141b371d8697b944a8d40cb37b924a[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jul 1 17:53:49 2026 +0530
+
+    Added Waroom, Dna and timeline
+
+[33mcommit bf1899fe49b6dd9d3aff2a668c28c3aedc858602[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jun 30 13:21:54 2026 +0530
+
+    Added Settings button
+
+[33mcommit 391a9e42135138c64e9aa77c517d3dfaa3561a81[m
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Mon Jun 29 17:57:17 2026 +0530
+
+    Delete .github/workflows/python-app.yml
+
+[33mcommit 0f91f5515cc56439ddeffa8c229a037f8cacb4b3[m
+Author: Apurv Bajpai <154694855+Apurvbajpai2531@users.noreply.github.com>
+Date:   Mon Jun 29 17:56:45 2026 +0530
+
+    Create python-app.yml
+
+[33mcommit 7bcb86a9553edd862bdc16db7b5fefdad450cf1c[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 17:48:17 2026 +0530
+
+    Adding the local ai assitant to the project
+
+[33mcommit bef1d96bb16457a0a6080e4f47156c4df7621aa7[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 13:20:34 2026 +0530
+
+    Remove virtual environments from git
+
+[33mcommit 772d28d4a1af73e81fd58ad85211ce5fa056ff83[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 13:13:08 2026 +0530
+
+    Remove ignored environments from tracking
+
+[33mcommit 2844c339c5fec85b0003ae8c4627d02e2338e209[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 13:08:57 2026 +0530
+
+    Remove virtual environments from repository
+
+[33mcommit f8b11da21d92168370e305dc4d04c276d2d18b6d[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 13:05:01 2026 +0530
+
+    Adding virtual environment to gitignore
+
+[33mcommit 867d55836b08af497016e71a723ba784c66fa507[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 12:47:30 2026 +0530
+
+    Remove virtual environment from repository
+
+[33mcommit a0a7e69699cc21ed54d0438205786aa14a968dbb[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 29 12:46:09 2026 +0530
+
+    Adding more feature to the frontend and backend part
+
+[33mcommit 1d0fcaf6de629a785a4d55fc08ffc8f1170ad515[m
+Author: Apurvbajpai2531 <apurvbjp@gmail.com>
+Date:   Sun Jun 28 20:07:10 2026 +0530
+
+    Added the rest of the network Layer
+
+[33mcommit e6f3091649e7d78f4ead0ac994bd1fb4f4766961[m
+Author: ApurvBajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jun 24 16:55:50 2026 +0530
+
+    Adding the final touch to the project
+
+[33mcommit aaf99863670beb82f2511ef2ddebf53a9acb376c[m
+Author: ApurvBajpai2531 <apurvbjp@gmail.com>
+Date:   Wed Jun 24 13:13:48 2026 +0530
+
+    Added more features to the project
+
+[33mcommit fb12ae6322d5c6486135d1ec294eca104f6a732a[m
+Author: ApurvBajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jun 23 18:29:30 2026 +0530
+
+    Added Prod dev
+
+[33mcommit 2e3ad6ddbb28a4d1300e5bbf2e84913fd75b665f[m
+Author: ApurvBajpai2531 <apurvbjp@gmail.com>
+Date:   Tue Jun 23 15:20:10 2026 +0530
+
+    Added the required setup for the project including backend, frontend and database
+
+[33mcommit 5d702da2393f6f4ff0896004a9b384d40deebd0f[m
+Author: ApurvBajpai2531 <apurvbjp@gmail.com>
+Date:   Mon Jun 22 18:52:55 2026 +0530
+
+    Added Project Initial Setup

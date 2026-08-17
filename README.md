@@ -873,9 +873,6 @@ EKS Deployment
 
 DORA metrics are visualized through Grafana using deployment and application telemetry.
 
-> 📸 Add your DORA dashboard screenshot as `Images/Grafana-dora.png` once exported from Grafana — it isn't in the `Images/` folder yet.
-
-```
 ![DORA Dashboard](Images/Grafana-dora.png)
 ```
 
