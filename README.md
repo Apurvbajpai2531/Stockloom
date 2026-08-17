@@ -827,6 +827,16 @@ PostgreSQL / Agentic AI
 
 ---
 
+### 🔐 SSL Certificate & Cert-Manager
+
+SSL/TLS: HTTPS certificates are provisioned and managed automatically using Cert-Manager and Kubernetes Certificate / Issuer resources.
+
+![Cert-Manager](Images/Cert-Manager.png)
+
+
+
+
+---
 ## 📡 OpenTelemetry
 
 OpenTelemetry provides a standard telemetry layer for metrics, logs and traces.
